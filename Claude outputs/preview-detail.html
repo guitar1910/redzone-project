@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RedZone — ตัวอย่างช่องรายละเอียด</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Bai+Jamjuree:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#181818;--panel:#222222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;
+  --border:#393939;--border-strong:#4E4E4E;--accent:#EDEDED;--accent-2:#FFFFFF;
+  --on-accent:#1A1A1A;--accent-soft:#333333;
+  --high:#DE8A81;--mid:#CFAE63;--low:#7FBE97;--high-soft:#332827;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-display:"Bai Jamjuree",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0E0E0E;color:var(--text);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.page{max-width:1240px;margin:0 auto;padding:32px 20px 80px}
+h1{font-family:var(--f-display);font-size:23px;margin:0 0 6px}
+.sub{color:var(--dim);font-size:14px;margin:0 0 30px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start}
+.col > .hd{display:flex;align-items:center;gap:10px;margin:0 0 10px;flex-wrap:wrap}
+.tag{background:var(--accent);color:var(--on-accent);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
+.col > .hd b{font-size:15px;font-weight:600}
+.col > .note-h{color:var(--dim);font-size:12.5px;margin:0 0 10px}
+
+/* real app styles */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px}
+.detail{}
+.dt-top{display:flex;gap:10px;align-items:flex-start}
+.detail h3{font-size:16px;font-weight:600;flex:1;margin:0}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600}
+.pill.high{background:var(--high-soft);color:var(--high)}
+.pill.st{background:var(--elev);color:var(--dim);font-weight:500}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:14px 0 0;font-size:13px}
+.kv dt{color:var(--dim);font-size:12px}
+.kv dd{margin:0}
+.mono{font-family:var(--f-mono)}
+.rowbtns{display:flex;gap:8px;margin-top:16px}
+.btn{padding:9px 14px;border-radius:10px;border:1px solid var(--border-strong);background:var(--elev);color:var(--text);font:inherit;font-size:13px;cursor:pointer}
+.btn.pri{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+
+/* ===== ปัจจุบัน ===== */
+.v0 .note{margin:14px 0 0;font-size:13px;color:var(--text);border-left:2px solid var(--accent-2);padding-left:11px}
+
+/* ===== แบบ 1 : มีหัวข้อ + ตัวใหญ่ขึ้น ===== */
+.v1 .notewrap{margin:16px 0 0}
+.v1 .notelbl{font-size:12px;color:var(--dim);margin:0 0 5px}
+.v1 .note{margin:0;font-size:15px;line-height:1.6;color:var(--text);font-weight:500;border-left:3px solid var(--high);padding-left:12px}
+
+/* ===== แบบ 2 : กล่องยกพื้น ===== */
+.v2 .notewrap{margin:16px 0 0;background:var(--elev);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.v2 .notelbl{font-size:11.5px;color:var(--dim);letter-spacing:.02em;margin:0 0 6px}
+.v2 .note{margin:0;font-size:15px;line-height:1.6;color:var(--text);font-weight:500}
+
+/* ===== แบบ 3 : ยกขึ้นไปใต้หัวข้อ ===== */
+.v3 .lead{margin:10px 0 0;font-size:15.5px;line-height:1.55;color:var(--text);font-weight:500}
+.v3 .kv{margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>ช่องรายละเอียดในการ์ดเหตุการณ์ — ตัวอย่าง 4 แบบ</h1>
+<p class="sub">ยังไม่ได้แก้ไฟล์จริง · ข้อความรายละเอียดคือบรรทัดที่คุณพิมพ์เองตอนแจ้งเหตุ</p>
+
+<div class="grid">
+
+  <!-- ปัจจุบัน -->
+  <div class="col">
+    <div class="hd"><span class="tag" style="background:var(--border-strong);color:var(--text)">ปัจจุบัน</span><b>เล็กและกลืนไปกับพื้น</b></div>
+    <p class="note-h">13px · ไม่มีหัวข้อกำกับ · เส้นซ้ายบาง</p>
+    <div class="panel v0">
+      <div class="detail">
+        <div class="dt-top"><h3>การคุกคาม/ตามรบกวน — ทางเดินริมคลองบางซื่อ</h3><span class="pill high">สูง</span></div>
+        <dl class="kv">
+          <dt>เลขรายงาน</dt><dd class="mono">RZ-2569-0152</dd>
+          <dt>ตำแหน่ง</dt><dd>ทางเดินริมคลองบางซื่อ</dd>
+          <dt>ประเภท</dt><dd>การคุกคาม/ตามรบกวน</dd>
+          <dt>พบเมื่อ</dt><dd class="mono">8 ก.ย. 2569 17:18</dd>
+          <dt>ระยะห่าง</dt><dd>79 ม. จาก มจพ.</dd>
+          <dt>สถานะ</dt><dd><span class="pill st">เสร็จสมบูรณ์</span></dd>
+        </dl>
+        <p class="note">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</p>
+        <div class="rowbtns"><button class="btn pri">แจ้งเหตุที่จุดนี้</button><button class="btn">ฉันพบเหตุนี้ด้วย</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- แบบ 1 -->
+  <div class="col">
+    <div class="hd"><span class="tag">แบบ 1</span><b>มีหัวข้อกำกับ + ตัวใหญ่ขึ้น</b></div>
+    <p class="note-h">15px ตัวหนาขึ้น · เส้นซ้ายหนาและเป็นสีระดับความเสี่ยง</p>
+    <div class="panel v1">
+      <div class="detail">
+        <div class="dt-top"><h3>การคุกคาม/ตามรบกวน — ทางเดินริมคลองบางซื่อ</h3><span class="pill high">สูง</span></div>
+        <dl class="kv">
+          <dt>เลขรายงาน</dt><dd class="mono">RZ-2569-0152</dd>
+          <dt>ตำแหน่ง</dt><dd>ทางเดินริมคลองบางซื่อ</dd>
+          <dt>ประเภท</dt><dd>การคุกคาม/ตามรบกวน</dd>
+          <dt>พบเมื่อ</dt><dd class="mono">8 ก.ย. 2569 17:18</dd>
+          <dt>ระยะห่าง</dt><dd>79 ม. จาก มจพ.</dd>
+          <dt>สถานะ</dt><dd><span class="pill st">เสร็จสมบูรณ์</span></dd>
+        </dl>
+        <div class="notewrap">
+          <p class="notelbl">รายละเอียดจากผู้แจ้ง</p>
+          <p class="note">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</p>
+        </div>
+        <div class="rowbtns"><button class="btn pri">แจ้งเหตุที่จุดนี้</button><button class="btn">ฉันพบเหตุนี้ด้วย</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- แบบ 2 -->
+  <div class="col">
+    <div class="hd"><span class="tag">แบบ 2</span><b>กล่องยกพื้น</b></div>
+    <p class="note-h">มีพื้นหลังอ่อนกับขอบ · แยกออกจากตารางชัดสุด</p>
+    <div class="panel v2">
+      <div class="detail">
+        <div class="dt-top"><h3>การคุกคาม/ตามรบกวน — ทางเดินริมคลองบางซื่อ</h3><span class="pill high">สูง</span></div>
+        <dl class="kv">
+          <dt>เลขรายงาน</dt><dd class="mono">RZ-2569-0152</dd>
+          <dt>ตำแหน่ง</dt><dd>ทางเดินริมคลองบางซื่อ</dd>
+          <dt>ประเภท</dt><dd>การคุกคาม/ตามรบกวน</dd>
+          <dt>พบเมื่อ</dt><dd class="mono">8 ก.ย. 2569 17:18</dd>
+          <dt>ระยะห่าง</dt><dd>79 ม. จาก มจพ.</dd>
+          <dt>สถานะ</dt><dd><span class="pill st">เสร็จสมบูรณ์</span></dd>
+        </dl>
+        <div class="notewrap">
+          <p class="notelbl">รายละเอียดจากผู้แจ้ง</p>
+          <p class="note">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</p>
+        </div>
+        <div class="rowbtns"><button class="btn pri">แจ้งเหตุที่จุดนี้</button><button class="btn">ฉันพบเหตุนี้ด้วย</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- แบบ 3 -->
+  <div class="col">
+    <div class="hd"><span class="tag">แบบ 3</span><b>ย้ายขึ้นไปอยู่ใต้หัวข้อ</b></div>
+    <p class="note-h">อ่านเจอทันที ไม่ต้องกวาดตาข้ามตาราง · ตารางถูกดันลงล่าง</p>
+    <div class="panel v3">
+      <div class="detail">
+        <div class="dt-top"><h3>การคุกคาม/ตามรบกวน — ทางเดินริมคลองบางซื่อ</h3><span class="pill high">สูง</span></div>
+        <p class="lead">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</p>
+        <dl class="kv">
+          <dt>เลขรายงาน</dt><dd class="mono">RZ-2569-0152</dd>
+          <dt>ตำแหน่ง</dt><dd>ทางเดินริมคลองบางซื่อ</dd>
+          <dt>ประเภท</dt><dd>การคุกคาม/ตามรบกวน</dd>
+          <dt>พบเมื่อ</dt><dd class="mono">8 ก.ย. 2569 17:18</dd>
+          <dt>ระยะห่าง</dt><dd>79 ม. จาก มจพ.</dd>
+          <dt>สถานะ</dt><dd><span class="pill st">เสร็จสมบูรณ์</span></dd>
+        </dl>
+        <div class="rowbtns"><button class="btn pri">แจ้งเหตุที่จุดนี้</button><button class="btn">ฉันพบเหตุนี้ด้วย</button></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>

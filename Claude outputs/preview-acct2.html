@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตัวเลือกข้อความ — ความยินยอมเปิดเผยข้อมูล</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#181818; --panel:#222; --elev:#2E2E2E; --text:#EDEDED; --dim:#9B9B9B;
+  --border:#3A3A3A; --border-strong:#575757; --accent:#EDEDED; --high:#D08279; --low:#7FAE93;
+  --r-m:10px; --r-l:16px;
+  --f-display:"Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:var(--f-body)}
+body{background:var(--bg);color:var(--text);padding:34px 20px 70px;line-height:1.6}
+.wrap{max-width:780px;margin:0 auto}
+h1{font-family:var(--f-display);font-size:23px;font-weight:700;margin-bottom:6px}
+.sub{color:var(--dim);font-size:13px;margin-bottom:26px}
+h2{font-family:var(--f-display);font-size:15px;font-weight:700;margin:32px 0 12px;
+   padding-bottom:8px;border-bottom:1px solid var(--border)}
+.opt{margin-bottom:26px}
+.opt-h{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.tag{font-family:var(--f-display);font-weight:700;font-size:13px;background:var(--elev);
+     border:1px solid var(--border);border-radius:999px;padding:3px 13px}
+.opt-h b{font-size:14.5px;font-weight:600}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-l);padding:4px 18px}
+.switch{display:flex;align-items:center;gap:12px;justify-content:space-between;
+        padding:12px 0;border-bottom:1px solid var(--border)}
+.switch:last-child{border-bottom:none}
+.switch .lbl{font-size:13.5px}
+.switch .lbl span{display:block;color:var(--dim);font-size:11.5px}
+.switch .lbl span.mono{font-family:var(--f-mono)}
+.tg{width:42px;height:24px;border-radius:999px;background:var(--border-strong);
+    position:relative;flex:none;border:none}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;
+           border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.tg[aria-pressed="true"]{background:var(--accent)}
+.tg[aria-pressed="true"]::after{transform:translateX(18px)}
+.tg[data-locked]{opacity:.85}
+.lockpill{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;
+          background:var(--elev);color:var(--dim);font-size:10px;vertical-align:1px}
+.note{color:var(--dim);font-size:12px;margin-top:9px;padding-left:2px}
+.note b{color:var(--text);font-weight:600}
+.state{display:flex;gap:10px;margin-top:10px;font-size:11.5px;color:var(--dim)}
+.state div{flex:1;background:var(--panel);border:1px solid var(--border);
+           border-radius:var(--r-m);padding:9px 12px}
+.state b{display:block;color:var(--text);font-size:12px;font-weight:600;margin-bottom:2px}
+.warn{border-left:2px solid var(--high);padding-left:13px;margin-top:14px;color:var(--dim);font-size:12.5px}
+.warn b{color:var(--text);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>ข้อความความยินยอมเปิดเผยข้อมูล</h1>
+  <p class="sub">แก้สวิตช์บนให้ตรงความหมายจริง (ซ่อนชื่อจากผู้ใช้ทั่วไป ไม่ใช่จากแอดมิน) · ตัด "เหตุฉุกเฉินโทร 191" ออกแล้ว</p>
+
+  <h2>ส่วนบน — สวิตช์ไม่เปิดเผยชื่อ (ใช้ข้อความนี้ทุกแบบ)</h2>
+  <div class="card">
+    <div class="switch">
+      <div class="lbl">
+        <span>ไม่แสดงชื่อผู้ใช้ต่อสาธารณะ</span>
+        <span>ผู้ใช้คนอื่นจะเห็นรายงานนี้เป็น "ไม่ระบุชื่อ" · ผู้ดูแลระบบยังเห็นบัญชีของคุณตามปกติ</span>
+      </div>
+      <button class="tg" aria-pressed="true"></button>
+    </div>
+  </div>
+  <div class="state">
+    <div><b>ปิดสวิตช์</b>ผู้ใช้คนอื่นเห็นชื่อผู้ใช้ของคุณบนรายงานนี้</div>
+    <div><b>เปิดสวิตช์</b>ผู้ใช้คนอื่นเห็นเป็น "ไม่ระบุชื่อ" · ผู้ดูแลระบบยังเห็นบัญชีของคุณตามปกติ</div>
+  </div>
+
+  <h2>ส่วนล่าง — ข้อความความยินยอม เลือก 1 แบบ</h2>
+
+  <!-- ก -->
+  <div class="opt">
+    <div class="opt-h"><span class="tag">ก</span><b>เป็นทางการ อ่านแล้วรู้สึกเป็นระบบจริง</b></div>
+    <div class="card">
+      <div class="switch">
+        <div class="lbl">
+          <span>ยินยอมให้ใช้ข้อมูลส่วนบุคคล <span class="lockpill">จำเป็น</span></span>
+          <span class="mono">s123456790@email.kmutnb.ac.th</span>
+          <span>การส่งรายงานถือว่าคุณยินยอมให้ระบบเปิดเผยชื่อผู้ใช้ รหัสนักศึกษา และอีเมลข้างต้นแก่ผู้ดูแลระบบ เพื่อตรวจสอบความถูกต้องของรายงานและแจ้งผลกลับ ข้อมูลนี้ใช้เฉพาะการดำเนินการต่อรายงานเท่านั้น</span>
+        </div>
+        <button class="tg" data-locked aria-pressed="true"></button>
+      </div>
+    </div>
+    <p class="note">ครบทั้งสามส่วน — ยินยอมอะไร ให้ใคร เพื่ออะไร เหมาะกับรายงาน SA ที่ต้องอธิบายการไหลของข้อมูล</p>
+  </div>
+
+  <!-- ข -->
+  <div class="opt">
+    <div class="opt-h"><span class="tag">ข</span><b>กระชับ อ่านจบใน 2 บรรทัด</b></div>
+    <div class="card">
+      <div class="switch">
+        <div class="lbl">
+          <span>เปิดเผยข้อมูลผู้แจ้งแก่ผู้ดูแลระบบ <span class="lockpill">จำเป็น</span></span>
+          <span class="mono">s123456790@email.kmutnb.ac.th</span>
+          <span>ผู้ดูแลระบบจะเห็นชื่อผู้ใช้ รหัสนักศึกษา และอีเมลของคุณ เพื่อยืนยันตัวผู้แจ้งและติดต่อกลับ · ผู้ใช้ทั่วไปไม่เห็นข้อมูลเหล่านี้</span>
+        </div>
+        <button class="tg" data-locked aria-pressed="true"></button>
+      </div>
+    </div>
+    <p class="note">สั้นที่สุด แต่ยังบอกครบว่าใครเห็นและใครไม่เห็น ไม่มีคำว่า "ยินยอม" ตรง ๆ</p>
+  </div>
+
+  <!-- ค -->
+  <div class="opt">
+    <div class="opt-h"><span class="tag">ค</span><b>แนว PDPA เน้นสิทธิและขอบเขตการใช้</b></div>
+    <div class="card">
+      <div class="switch">
+        <div class="lbl">
+          <span>ข้อตกลงการเปิดเผยข้อมูล <span class="lockpill">จำเป็น</span></span>
+          <span class="mono">s123456790@email.kmutnb.ac.th</span>
+          <span>เมื่อกดส่งรายงาน ถือว่าคุณยินยอมให้ระบบจัดเก็บและเปิดเผยข้อมูลบัญชีของคุณแก่ผู้ดูแลระบบ เพื่อประโยชน์ในการตรวจสอบและความปลอดภัยของส่วนรวม ข้อมูลจะไม่ถูกเผยแพร่ต่อผู้ใช้อื่นหรือบุคคลภายนอก</span>
+        </div>
+        <button class="tg" data-locked aria-pressed="true"></button>
+      </div>
+    </div>
+    <p class="note">ภาษาใกล้เคียงประกาศความเป็นส่วนตัวจริง มีทั้งวัตถุประสงค์และขอบเขตการเปิดเผย</p>
+  </div>
+
+  <div class="warn">
+    <b>เจอบั๊กที่ขัดกับที่บอกมา</b> — ตอนนี้ถ้าเปิดสวิตช์ไม่เปิดเผยชื่อ
+    <code>api/reports.php</code> จะบันทึก <code>user_id = NULL</code> ลงฐานข้อมูล
+    แปลว่าแอดมิน <b>ไม่เห็น</b> ว่าใครส่ง และเจ้าตัวก็หารายงานนั้นใน "รายงานของฉัน" ไม่เจอ
+    ต้องแก้เป็นเก็บ <code>user_id</code> ไว้เสมอ แล้วให้ <code>is_anonymous</code>
+    คุมแค่การแสดงผลต่อผู้ใช้ทั่วไป ตามที่คุณอธิบาย จะแก้ให้พร้อมกับเปลี่ยนข้อความเลยไหม
+  </div>
+
+</div>
+</body>
+</html>

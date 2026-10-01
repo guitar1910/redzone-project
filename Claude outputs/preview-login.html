@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RedZone — ตัวอย่างหน้าล็อกอิน 3 แบบ</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Bai+Jamjuree:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#181818; --panel:#222222; --elev:#2E2E2E; --text:#EDEDED; --dim:#9B9B9B;
+  --border:#393939; --border-strong:#4E4E4E; --accent:#EDEDED; --accent-2:#FFFFFF;
+  --on-accent:#1A1A1A; --accent-soft:#333333;
+  --art-light:#2C2C2C; --art-dark:#4E4E4E; --art-ink:#B0B0B0;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-display:"Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0E0E0E;color:var(--text);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.page{max-width:1180px;margin:0 auto;padding:32px 20px 80px}
+.page > h1{font-family:var(--f-display);font-size:24px;letter-spacing:.02em;margin:0 0 6px}
+.page > .sub{color:var(--dim);font-size:14px;margin:0 0 34px}
+
+.opt{margin:0 0 44px}
+.opthead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 12px}
+.tag{background:var(--accent);color:var(--on-accent);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
+.opthead h2{font-size:17px;font-weight:600;margin:0}
+.opthead .note{color:var(--dim);font-size:13px;margin:0}
+
+.frame{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg)}
+.bar{background:var(--panel);border-bottom:1px solid var(--border);padding:7px 12px;display:flex;align-items:center;gap:7px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--border-strong)}
+.bar span{margin-left:8px;color:var(--dim);font-size:11.5px;font-family:var(--f-body)}
+
+/* shared login pieces */
+.login{background:var(--bg)}
+.wm{font-family:var(--f-display);font-weight:700;font-size:30px;letter-spacing:.2em;text-transform:uppercase;color:var(--art-ink)}
+.wm.big{font-size:34px}
+h3.lg{font-size:22px;font-weight:600;margin:0}
+.field{display:grid;gap:5px}
+.field label{font-size:12.5px;color:var(--dim);font-weight:500}
+.field input{border-radius:999px;padding:12px 16px;background:var(--elev);border:1px solid var(--border);color:var(--text);font:inherit;width:100%}
+.btnpri{border-radius:999px;padding:12px;width:100%;background:var(--accent);color:var(--on-accent);border:none;font:inherit;font-weight:600;cursor:pointer}
+.linky{color:var(--accent);font-size:12.5px;font-weight:600;text-align:center;background:none;border:none;cursor:pointer;padding:0}
+.swline{font-size:12.5px;color:var(--dim);text-align:center;margin:0}
+.pane{display:grid;gap:15px}
+
+/* ---------- OPTION A : ตัดพื้นซ้ายออก จัดกลางจอ ---------- */
+.a-wrap{min-height:460px;display:grid;place-items:center;padding:48px 24px}
+.a-card{width:100%;max-width:380px;display:grid;gap:22px}
+.a-head{text-align:center;display:grid;gap:8px;justify-items:center}
+.a-head p{margin:0;font-size:13.5px;color:var(--dim);max-width:34ch}
+
+/* ---------- OPTION B : การ์ดกลางจอ มีขอบ ---------- */
+.b-wrap{min-height:460px;display:grid;place-items:center;padding:48px 24px}
+.b-card{width:100%;max-width:420px;background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:36px 32px;display:grid;gap:22px}
+.b-head{display:grid;gap:8px;justify-items:center;text-align:center}
+.b-head p{margin:0;font-size:13.5px;color:var(--dim)}
+.b-foot{text-align:center;font-size:11.5px;color:var(--dim);margin:0}
+
+/* ---------- OPTION C : เหลือ 2 คอลัมน์ แต่ซ้ายเป็นตัวหนังสือล้วน ---------- */
+.c-wrap{min-height:460px;display:grid;grid-template-columns:1fr 1fr}
+.c-art{background:var(--art-light);padding:44px 40px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--border)}
+.c-art p{font-size:14px;max-width:26ch;margin:12px 0 0;color:var(--art-ink)}
+.c-art .foot{font-size:11.5px;color:var(--art-ink);opacity:.85}
+.c-form{padding:44px 40px;display:flex;flex-direction:column;justify-content:center;gap:16px;max-width:420px}
+
+@media(max-width:720px){
+  .c-wrap{grid-template-columns:1fr}
+  .c-art{min-height:200px;border-right:none;border-bottom:1px solid var(--border)}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>หน้าล็อกอิน — ตัวอย่าง 3 แบบ</h1>
+<p class="sub">ยังไม่ได้แก้ไฟล์จริงนะ นี่คือภาพตัวอย่างให้เลือก · บอกมาว่าเอาแบบไหน แล้วผมจะแก้ให้</p>
+
+<!-- A -->
+<section class="opt">
+  <div class="opthead">
+    <span class="tag">แบบ A</span>
+    <h2>ตัดพื้นซ้ายออกทั้งหมด จัดฟอร์มกลางจอ</h2>
+    <p class="note">สะอาดที่สุด · โลโก้อยู่บนฟอร์ม</p>
+  </div>
+  <div class="frame">
+    <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>redzone.infinityfreeapp.com</span></div>
+    <div class="login a-wrap">
+      <div class="a-card">
+        <div class="a-head">
+          <div class="wm big">Red Zone</div>
+          <p>แจ้งเหตุและดูพื้นที่เสี่ยงในรัศมี 10 กม. รอบ มจพ. ด้วยบัญชีของมหาวิทยาลัย</p>
+        </div>
+        <div class="pane">
+          <h3 class="lg">เข้าสู่ระบบ</h3>
+          <div class="field"><label>ชื่อผู้ใช้</label><input placeholder="ชื่อผู้ใช้ของคุณ"></div>
+          <div class="field"><label>รหัสผ่าน</label><input type="password" placeholder="รหัสผ่าน"></div>
+          <button class="btnpri">เข้าสู่ระบบ</button>
+          <button class="linky">ลืมรหัสผ่าน?</button>
+          <p class="swline">ยังไม่มีบัญชี? <button class="linky">สมัครสมาชิก</button></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- B -->
+<section class="opt">
+  <div class="opthead">
+    <span class="tag">แบบ B</span>
+    <h2>การ์ดกลางจอ มีขอบและพื้นหลังยกขึ้น</h2>
+    <p class="note">ดูเป็นระบบงานจริง · แนะนำสำหรับพรีเซนต์</p>
+  </div>
+  <div class="frame">
+    <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>redzone.infinityfreeapp.com</span></div>
+    <div class="login b-wrap">
+      <div class="b-card">
+        <div class="b-head">
+          <div class="wm">Red Zone</div>
+          <p>แจ้งเหตุและดูพื้นที่เสี่ยงในรัศมี 10 กม. รอบ มจพ.</p>
+        </div>
+        <div class="pane">
+          <h3 class="lg">เข้าสู่ระบบ</h3>
+          <div class="field"><label>ชื่อผู้ใช้</label><input placeholder="ชื่อผู้ใช้ของคุณ"></div>
+          <div class="field"><label>รหัสผ่าน</label><input type="password" placeholder="รหัสผ่าน"></div>
+          <button class="btnpri">เข้าสู่ระบบ</button>
+          <button class="linky">ลืมรหัสผ่าน?</button>
+          <p class="swline">ยังไม่มีบัญชี? <button class="linky">สมัครสมาชิก</button></p>
+        </div>
+        <p class="b-foot">ระบบรายงานเหตุการณ์และพื้นที่เสี่ยง · มจพ.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- C -->
+<section class="opt">
+  <div class="opthead">
+    <span class="tag">แบบ C</span>
+    <h2>คงสองฝั่งไว้ แต่เอาคลื่นออก เหลือตัวหนังสือล้วน</h2>
+    <p class="note">เปลี่ยนน้อยที่สุด · ยังเห็นข้อความอธิบายระบบชัด</p>
+  </div>
+  <div class="frame">
+    <div class="bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span>redzone.infinityfreeapp.com</span></div>
+    <div class="login c-wrap">
+      <div class="c-art">
+        <div>
+          <div class="wm">Red Zone</div>
+          <p>แจ้งเหตุและดูพื้นที่เสี่ยงในรัศมี 10 กม. รอบ มจพ. ด้วยบัญชีของมหาวิทยาลัย</p>
+        </div>
+        <div class="foot">ระบบรายงานเหตุการณ์และพื้นที่เสี่ยง · มจพ.</div>
+      </div>
+      <div class="c-form">
+        <div class="pane">
+          <h3 class="lg">เข้าสู่ระบบ</h3>
+          <div class="field"><label>ชื่อผู้ใช้</label><input placeholder="ชื่อผู้ใช้ของคุณ"></div>
+          <div class="field"><label>รหัสผ่าน</label><input type="password" placeholder="รหัสผ่าน"></div>
+          <button class="btnpri">เข้าสู่ระบบ</button>
+          <button class="linky">ลืมรหัสผ่าน?</button>
+          <p class="swline">ยังไม่มีบัญชี? <button class="linky">สมัครสมาชิก</button></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

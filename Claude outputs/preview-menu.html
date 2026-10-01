@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตัวอย่างเมนูโปรไฟล์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --f-display:"Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r-s:6px; --r-m:10px; --r-l:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:var(--f-body)}
+body{background:#0F0F10;color:#EDEDED;padding:30px 20px 80px;line-height:1.55}
+.page{max-width:1120px;margin:0 auto}
+h1{font-family:var(--f-display);font-size:23px;font-weight:700;margin-bottom:6px}
+.lede{color:#9B9B9B;font-size:13px;margin-bottom:26px;max-width:70ch}
+.opt{margin-bottom:40px}
+.opt-h{display:flex;align-items:baseline;gap:11px;margin-bottom:4px;flex-wrap:wrap}
+.tag{font-family:var(--f-display);font-weight:700;font-size:13px;background:#232326;
+     border:1px solid #35353A;border-radius:999px;padding:3px 13px}
+.opt-h b{font-size:15.5px;font-weight:600}
+.opt-note{color:#8F8F95;font-size:12.5px;margin-bottom:14px;max-width:74ch}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.pair{grid-template-columns:1fr}}
+.mode-lbl{font-size:11px;color:#8F8F95;font-family:var(--f-mono);margin-bottom:6px}
+
+/* โทนสีจริงของเว็บ */
+.lt{--bg:#F7F4F3;--panel:#FFFFFF;--elev:#F0EAE9;--text:#241B1A;--dim:#7A6D6B;--border:#E4DAD8;
+    --border-strong:#C9BAB8;--accent:#8E1B16;--on-accent:#FFFFFF;--accent-soft:#F5E4E2;
+    --high:#C0281F;--shadow:0 1px 2px rgba(60,30,28,.07),0 8px 24px -12px rgba(60,30,28,.22)}
+.dk{--bg:#181818;--panel:#222222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;--border:#393939;
+    --border-strong:#4E4E4E;--accent:#E0574C;--on-accent:#1A1010;--accent-soft:#33211F;
+    --high:#DE8A81;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7)}
+
+.stage{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+       color:var(--text);padding-bottom:26px;min-height:430px}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--panel);
+        border-bottom:1px solid var(--border)}
+.wm{font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.14em;color:var(--accent)}
+.wm i{font-style:normal;color:var(--dim);font-weight:500;font-size:10.5px;margin-left:6px;letter-spacing:0}
+.sp{flex:1}
+.avatar{width:32px;height:32px;border-radius:999px;background:var(--accent);color:var(--on-accent);
+        display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:13px;
+        outline:2px solid transparent;outline-offset:2px}
+.avatar.on{outline-color:var(--accent)}
+
+.menuwrap{display:flex;justify-content:flex-end;padding:8px 14px 0}
+.menu{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-m);
+      box-shadow:var(--shadow);width:266px;overflow:hidden;font-size:13.5px}
+.m-head{display:flex;gap:11px;padding:14px;align-items:center}
+.m-head .avatar{width:40px;height:40px;font-size:15px}
+.m-name{min-width:0}
+.m-name b{display:block;font-weight:600;font-size:14px;line-height:1.3}
+.m-name span{display:block;color:var(--dim);font-size:11.5px;font-family:var(--f-mono)}
+.m-role{display:inline-block;margin-top:4px;font-size:10px;font-weight:600;padding:1px 8px;
+        border-radius:999px;background:var(--accent-soft);color:var(--accent);letter-spacing:.02em}
+.m-sep{height:1px;background:var(--border)}
+.m-grp{padding:5px 0}
+.m-i{display:flex;align-items:center;gap:11px;width:100%;padding:9px 14px;text-align:left;
+     color:var(--text);background:none;border:none;font-size:13.5px;cursor:pointer}
+.m-i:hover{background:var(--elev)}
+.m-i svg{width:17px;height:17px;flex:none;color:var(--dim);stroke-width:1.7}
+.m-i .val{margin-left:auto;color:var(--dim);font-size:11.5px}
+.m-i .chev{margin-left:auto;width:14px;height:14px;color:var(--dim)}
+.m-i.danger{color:var(--high)}
+.m-i.danger svg{color:var(--high)}
+.m-badge{margin-left:auto;background:var(--high);color:#fff;font-family:var(--f-mono);font-size:10px;
+         min-width:18px;height:18px;border-radius:999px;display:grid;place-items:center;padding:0 5px}
+.seg{display:flex;gap:4px;padding:8px 14px 12px}
+.seg button{flex:1;padding:6px 4px;border-radius:7px;border:1px solid var(--border);background:var(--panel);
+            color:var(--dim);font-size:11.5px;cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+.grp-lbl{padding:9px 14px 3px;font-size:10.5px;color:var(--dim);font-weight:600;letter-spacing:.04em}
+.foot{padding:9px 14px 12px;font-size:10.5px;color:var(--dim);text-align:center}
+.warn{border-left:2px solid #E0574C;padding:10px 14px;margin:20px 0 0;color:#B9B2B1;font-size:12.5px;max-width:78ch}
+.warn b{color:#EDEDED;font-weight:600}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>เมนูโปรไฟล์ตอนกดรูปขวาบน</h1>
+<p class="lede">3 แบบ แต่ละแบบแสดงทั้งโหมดสว่างและโหมดมืด · เมนูปิดได้ด้วยการกดที่ว่าง กดปุ่ม Esc หรือกดรูปซ้ำ</p>
+
+<!-- ก -->
+<div class="opt">
+  <div class="opt-h"><span class="tag">ก</span><b>สั้น ตรงประเด็น</b></div>
+  <p class="opt-note">แค่บอกว่าเป็นใคร เข้าโปรไฟล์ และออกจากระบบ ทำเร็วที่สุด ไม่เพิ่มฟังก์ชันใหม่</p>
+  <div class="pair">
+    <div><div class="mode-lbl">โหมดสว่าง</div><div class="stage lt" data-v="a"></div></div>
+    <div><div class="mode-lbl">โหมดมืด</div><div class="stage dk" data-v="a"></div></div>
+  </div>
+</div>
+
+<!-- ข -->
+<div class="opt">
+  <div class="opt-h"><span class="tag">ข</span><b>รวมเมนูหลัก + สลับธีมเอง</b></div>
+  <p class="opt-note">เพิ่มทางลัดไปหน้าที่ใช้บ่อย และเพิ่มปุ่มเลือกธีมเองได้ 3 แบบ (ตามเครื่อง / สว่าง / มืด) ซึ่งตอนนี้โค้ดรองรับอยู่แล้วแต่ยังไม่มีปุ่มให้กด</p>
+  <div class="pair">
+    <div><div class="mode-lbl">โหมดสว่าง</div><div class="stage lt" data-v="b"></div></div>
+    <div><div class="mode-lbl">โหมดมืด</div><div class="stage dk" data-v="b"></div></div>
+  </div>
+</div>
+
+<!-- ค -->
+<div class="opt">
+  <div class="opt-h"><span class="tag">ค</span><b>แบบ YouTube เต็มรูปแบบ</b></div>
+  <p class="opt-note">มีทั้งข้อมูลบัญชี เมนูหลัก ธีม และออกจากระบบ แยกเป็นกลุ่มชัดเจน ใกล้เคียงรูปที่ส่งมามากที่สุด แต่ยาวที่สุดและซ้ำกับเมนูด้านซ้ายบนจอคอม</p>
+  <div class="pair">
+    <div><div class="mode-lbl">โหมดสว่าง</div><div class="stage lt" data-v="c"></div></div>
+    <div><div class="mode-lbl">โหมดมืด</div><div class="stage dk" data-v="c"></div></div>
+  </div>
+</div>
+
+<div class="warn">
+  <b>ข้อสังเกต</b> — บนจอคอมมีเมนูด้านซ้ายอยู่แล้ว (แผนที่ / รายงานของฉัน / การแจ้งเตือน / โปรไฟล์)
+  และบนมือถือมีแถบล่าง เพราะงั้นแบบ ค จะมีรายการซ้ำกับเมนูเดิม
+  ถ้าจะเอาแบบ ค อาจตัดรายการที่ซ้ำออกเหลือแค่ข้อมูลบัญชี ธีม และออกจากระบบ ก็จะได้แบบ ข พอดี
+</div>
+
+</div>
+
+<script>
+var ICON = {
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0" stroke-linecap="round"/>',
+  out:'<path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4" stroke-linecap="round"/><path d="M10 17l-5-5 5-5M5 12h11" stroke-linecap="round" stroke-linejoin="round"/>',
+  doc:'<path d="M15 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7l-4-4Z" stroke-linejoin="round"/><path d="M9 12h6M9 16h4"/>',
+  bell:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 8-2 8h16s-2-2-2-8Z" stroke-linejoin="round"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/>',
+  moon:'<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke-linejoin="round"/>',
+  map:'<path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Z" stroke-linejoin="round"/><path d="M9 3v16M15 5v16"/>',
+  shield:'<path d="M12 3 5 6v6c0 4.4 3 8.2 7 9 4-.8 7-4.6 7-9V6l-7-3Z" stroke-linejoin="round"/>'
+};
+function ic(n){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">'+ICON[n]+'</svg>';}
+var chev = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+var HEAD =
+  '<div class="m-head">' +
+    '<span class="avatar">u</span>' +
+    '<span class="m-name"><b>user123</b><span>1000000123</span>' +
+      '<span class="m-role">นักศึกษา</span></span>' +
+  '</div>';
+
+var MENUS = {
+  a: HEAD + '<div class="m-sep"></div>' +
+     '<div class="m-grp">' +
+       '<button class="m-i">' + ic('user') + 'โปรไฟล์ของฉัน</button>' +
+       '<button class="m-i danger">' + ic('out') + 'ออกจากระบบ</button>' +
+     '</div>',
+
+  b: HEAD + '<div class="m-sep"></div>' +
+     '<div class="m-grp">' +
+       '<button class="m-i">' + ic('user') + 'โปรไฟล์ของฉัน</button>' +
+       '<button class="m-i">' + ic('doc') + 'รายงานของฉัน</button>' +
+       '<button class="m-i">' + ic('bell') + 'การแจ้งเตือน<span class="m-badge">3</span></button>' +
+     '</div>' +
+     '<div class="m-sep"></div>' +
+     '<div class="grp-lbl">ธีม</div>' +
+     '<div class="seg">' +
+       '<button class="on">ตามเครื่อง</button><button>สว่าง</button><button>มืด</button>' +
+     '</div>' +
+     '<div class="m-sep"></div>' +
+     '<div class="m-grp">' +
+       '<button class="m-i danger">' + ic('out') + 'ออกจากระบบ</button>' +
+     '</div>',
+
+  c: HEAD + '<div class="m-sep"></div>' +
+     '<div class="m-grp">' +
+       '<button class="m-i">' + ic('user') + 'โปรไฟล์ของฉัน</button>' +
+       '<button class="m-i">' + ic('map') + 'แผนที่พื้นที่เสี่ยง</button>' +
+       '<button class="m-i">' + ic('doc') + 'รายงานของฉัน</button>' +
+       '<button class="m-i">' + ic('bell') + 'การแจ้งเตือน<span class="m-badge">3</span></button>' +
+     '</div>' +
+     '<div class="m-sep"></div>' +
+     '<div class="m-grp">' +
+       '<button class="m-i">' + ic('moon') + 'ธีม<span class="val">ตามเครื่อง</span>' + chev + '</button>' +
+     '</div>' +
+     '<div class="m-sep"></div>' +
+     '<div class="m-grp">' +
+       '<button class="m-i danger">' + ic('out') + 'ออกจากระบบ</button>' +
+     '</div>' +
+     '<div class="m-sep"></div>' +
+     '<div class="foot">ต้นแบบเพื่อการศึกษา · ข้อมูลจำลอง</div>'
+};
+
+document.querySelectorAll('.stage').forEach(function (el) {
+  var v = el.getAttribute('data-v');
+  el.innerHTML =
+    '<div class="topbar">' +
+      '<span class="wm">RED ZONE<i>มจพ.</i></span>' +
+      '<span class="sp"></span>' +
+      '<span class="avatar on">u</span>' +
+    '</div>' +
+    '<div class="menuwrap"><div class="menu">' + MENUS[v] + '</div></div>';
+});
+</script>
+</body>
+</html>

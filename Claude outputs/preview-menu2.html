@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตัวอย่างเมนูโปรไฟล์ ชุดที่ 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --f-display:"Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --r-s:6px; --r-m:10px; --r-l:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:var(--f-body)}
+body{background:#0F0F10;color:#EDEDED;padding:30px 20px 80px;line-height:1.55}
+.page{max-width:1120px;margin:0 auto}
+h1{font-family:var(--f-display);font-size:23px;font-weight:700;margin-bottom:6px}
+.lede{color:#9B9B9B;font-size:13px;margin-bottom:26px;max-width:72ch}
+.opt{margin-bottom:42px}
+.opt-h{display:flex;align-items:baseline;gap:11px;margin-bottom:4px;flex-wrap:wrap}
+.tag{font-family:var(--f-display);font-weight:700;font-size:13px;background:#232326;
+     border:1px solid #35353A;border-radius:999px;padding:3px 13px}
+.opt-h b{font-size:15.5px;font-weight:600}
+.opt-note{color:#8F8F95;font-size:12.5px;margin-bottom:14px;max-width:76ch}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:860px){.pair{grid-template-columns:1fr}}
+.mode-lbl{font-size:11px;color:#8F8F95;font-family:var(--f-mono);margin-bottom:6px}
+
+.lt{--bg:#F7F4F3;--panel:#FFFFFF;--elev:#F0EAE9;--text:#241B1A;--dim:#7A6D6B;--border:#E4DAD8;
+    --border-strong:#C9BAB8;--accent:#8E1B16;--on-accent:#FFFFFF;--accent-soft:#F5E4E2;
+    --high:#C0281F;--mid:#8A6410;--low:#2E6B4C;--shadow:0 1px 2px rgba(60,30,28,.07),0 8px 24px -12px rgba(60,30,28,.22)}
+.dk{--bg:#181818;--panel:#222222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;--border:#393939;
+    --border-strong:#4E4E4E;--accent:#E0574C;--on-accent:#1A1010;--accent-soft:#33211F;
+    --high:#DE8A81;--mid:#CFAE63;--low:#7FBE97;--shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7)}
+
+.stage{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+       color:var(--text);padding-bottom:26px;min-height:390px}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--panel);
+        border-bottom:1px solid var(--border)}
+.wm{font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.14em;color:var(--accent)}
+.wm i{font-style:normal;color:var(--dim);font-weight:500;font-size:10.5px;margin-left:6px;letter-spacing:0}
+.sp{flex:1}
+.avatar{width:32px;height:32px;border-radius:999px;background:var(--accent);color:var(--on-accent);
+        display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:13px;
+        outline:2px solid transparent;outline-offset:2px}
+.avatar.on{outline-color:var(--accent)}
+.menuwrap{display:flex;justify-content:flex-end;padding:8px 14px 0}
+.menu{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-m);
+      box-shadow:var(--shadow);width:272px;overflow:hidden;font-size:13.5px}
+.m-sep{height:1px;background:var(--border)}
+.m-grp{padding:5px 0}
+.m-i{display:flex;align-items:center;gap:11px;width:100%;padding:9px 14px;text-align:left;
+     color:var(--text);background:none;border:none;font-size:13.5px;cursor:pointer}
+.m-i:hover{background:var(--elev)}
+.m-i svg{width:17px;height:17px;flex:none;color:var(--dim);stroke-width:1.7}
+.m-i.danger{color:var(--high)}
+.m-i.danger svg{color:var(--high)}
+.m-badge{margin-left:auto;background:var(--high);color:#fff;font-family:var(--f-mono);font-size:10px;
+         min-width:18px;height:18px;border-radius:999px;display:grid;place-items:center;padding:0 5px}
+
+/* ---- ง : การ์ดโปรไฟล์มีสถิติ ---- */
+.card-head{padding:16px 14px 13px;text-align:center;background:var(--elev);border-bottom:1px solid var(--border)}
+.card-head .avatar{width:52px;height:52px;font-size:19px;margin:0 auto 9px;outline:none}
+.card-head b{display:block;font-size:15px;font-weight:600}
+.card-head .sub{display:block;color:var(--dim);font-size:11.5px;font-family:var(--f-mono);margin-top:1px}
+.card-head .role{display:inline-block;margin-top:7px;font-size:10px;font-weight:600;padding:2px 9px;
+                 border-radius:999px;background:var(--accent);color:var(--on-accent)}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border)}
+.stats div{padding:11px 4px;text-align:center;border-right:1px solid var(--border)}
+.stats div:last-child{border-right:none}
+.stats b{display:block;font-family:var(--f-display);font-size:18px;font-weight:700;line-height:1.1}
+.stats span{display:block;color:var(--dim);font-size:10px;margin-top:2px}
+
+/* ---- จ : แผ่นเลื่อนขึ้นบนมือถือ ---- */
+.phone{width:300px;margin:0 auto;border-radius:22px;overflow:hidden;background:var(--bg);
+       border:1px solid var(--border);position:relative;height:430px}
+.ph-top{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--panel);border-bottom:1px solid var(--border)}
+.ph-top .wm{font-size:13px}
+.dimmer{position:absolute;inset:0;background:rgba(0,0,0,.42)}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--panel);
+       border-radius:18px 18px 0 0;padding-bottom:10px;box-shadow:var(--shadow)}
+.grab{width:38px;height:4px;border-radius:999px;background:var(--border-strong);margin:9px auto 4px}
+.sh-head{display:flex;gap:11px;padding:10px 16px 13px;align-items:center}
+.sh-head .avatar{width:42px;height:42px;font-size:16px;outline:none}
+.sh-head b{display:block;font-size:14.5px;font-weight:600}
+.sh-head span{display:block;color:var(--dim);font-size:11.5px;font-family:var(--f-mono)}
+.sh-i{display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;text-align:left;
+      color:var(--text);background:none;border:none;font-size:14px}
+.sh-i svg{width:18px;height:18px;flex:none;color:var(--dim);stroke-width:1.7}
+.sh-i.danger{color:var(--high)}
+.sh-i.danger svg{color:var(--high)}
+
+/* ---- ฉ : มินิมอล ไม่มีไอคอน ---- */
+.mini{width:238px}
+.mini .mh{padding:15px 16px 12px;border-bottom:1px solid var(--border)}
+.mini .mh b{display:block;font-family:var(--f-display);font-size:16px;font-weight:700}
+.mini .mh span{display:block;color:var(--dim);font-size:11.5px;font-family:var(--f-mono);margin-top:1px}
+.mini .mi{display:block;width:100%;padding:10px 16px;text-align:left;background:none;border:none;
+          color:var(--text);font-size:13.5px}
+.mini .mi:hover{background:var(--elev)}
+.mini .mi.danger{color:var(--high);font-weight:600}
+.mini .lbl{padding:11px 16px 4px;font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
+.mini .seg{display:flex;gap:5px;padding:2px 16px 12px}
+.mini .seg button{flex:1;padding:5px 3px;border-radius:6px;border:1px solid var(--border);
+                  background:var(--panel);color:var(--dim);font-size:11px}
+.mini .seg button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+.warn{border-left:2px solid #E0574C;padding:10px 14px;margin-top:22px;color:#B9B2B1;font-size:12.5px;max-width:78ch}
+.warn b{color:#EDEDED;font-weight:600}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>เมนูโปรไฟล์ ชุดที่ 2</h1>
+<p class="lede">อีก 3 แบบที่รูปทรงต่างจากชุดแรก ไม่ใช่แค่สลับรายการเมนู</p>
+
+<div class="opt">
+  <div class="opt-h"><span class="tag">ง</span><b>การ์ดโปรไฟล์ มีตัวเลขสรุป</b></div>
+  <p class="opt-note">หัวการ์ดจัดกลาง มีแถวตัวเลขสรุปว่าแจ้งไปกี่เรื่อง ปิดแล้วกี่เรื่อง กำลังดำเนินการกี่เรื่อง ตัวเลขดึงจากฐานข้อมูลจริงได้เลย เพราะหน้าโปรไฟล์คำนวณอยู่แล้ว เห็นภาพรวมตัวเองโดยไม่ต้องเข้าหน้าโปรไฟล์</p>
+  <div class="pair">
+    <div><div class="mode-lbl">โหมดสว่าง</div><div class="stage lt" data-v="d"></div></div>
+    <div><div class="mode-lbl">โหมดมืด</div><div class="stage dk" data-v="d"></div></div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="opt-h"><span class="tag">จ</span><b>แผ่นเลื่อนขึ้นจากด้านล่าง เฉพาะบนมือถือ</b></div>
+  <p class="opt-note">บนคอมยังเป็นเมนูห้อยลงมาจากรูปโปรไฟล์เหมือนเดิม แต่บนมือถือเปลี่ยนเป็นแผ่นเลื่อนขึ้นจากขอบล่าง นิ้วโป้งเอื้อมถึงง่ายกว่าเมนูที่อยู่มุมขวาบน ปิดด้วยการปัดลงหรือกดพื้นที่มืด เป็นรูปแบบที่แอปบนมือถือส่วนใหญ่ใช้</p>
+  <div class="pair">
+    <div><div class="mode-lbl">มือถือ โหมดสว่าง</div><div class="stage lt" data-v="e" style="padding:18px 0"></div></div>
+    <div><div class="mode-lbl">มือถือ โหมดมืด</div><div class="stage dk" data-v="e" style="padding:18px 0"></div></div>
+  </div>
+</div>
+
+<div class="opt">
+  <div class="opt-h"><span class="tag">ฉ</span><b>มินิมอล ไม่มีไอคอน</b></div>
+  <p class="opt-note">ตัดไอคอนออกหมด เหลือแต่ตัวหนังสือ เมนูแคบลง อ่านไว ดูสะอาด เข้ากับหน้าตาส่วนอื่นของเว็บที่ใช้ตัวหนังสือเป็นหลักอยู่แล้ว</p>
+  <div class="pair">
+    <div><div class="mode-lbl">โหมดสว่าง</div><div class="stage lt" data-v="f"></div></div>
+    <div><div class="mode-lbl">โหมดมืด</div><div class="stage dk" data-v="f"></div></div>
+  </div>
+</div>
+
+<div class="warn">
+  <b>เลือกผสมได้</b> — รูปทรงกับรายการข้างในแยกกันได้ เช่น เอาการ์ดมีตัวเลขแบบ ง
+  แต่ใส่รายการแบบ ข (มีปุ่มธีม) หรือเอาแผ่นเลื่อนขึ้นแบบ จ เฉพาะมือถือ
+  แล้วบนคอมใช้แบบ ฉ ก็ได้ บอกมาได้เลยว่าอยากได้ผสมยังไง
+</div>
+
+</div>
+
+<script>
+var ICON = {
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0" stroke-linecap="round"/>',
+  out:'<path d="M15 3h4a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-4" stroke-linecap="round"/><path d="M10 17l-5-5 5-5M5 12h11" stroke-linecap="round" stroke-linejoin="round"/>',
+  doc:'<path d="M15 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7l-4-4Z" stroke-linejoin="round"/><path d="M9 12h6M9 16h4"/>',
+  bell:'<path d="M18 8a6 6 0 1 0-12 0c0 6-2 8-2 8h16s-2-2-2-8Z" stroke-linejoin="round"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/>',
+  moon:'<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z" stroke-linejoin="round"/>'
+};
+function ic(n,cls){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">'+ICON[n]+'</svg>';}
+
+var D_MENU =
+  '<div class="card-head">' +
+    '<div class="avatar">u</div>' +
+    '<b>user123</b><span class="sub">1000000123</span>' +
+    '<span class="role">นักศึกษา</span>' +
+  '</div>' +
+  '<div class="stats">' +
+    '<div><b>7</b><span>แจ้งทั้งหมด</span></div>' +
+    '<div><b>4</b><span>ปิดเรื่องแล้ว</span></div>' +
+    '<div><b>2</b><span>กำลังดำเนินการ</span></div>' +
+  '</div>' +
+  '<div class="m-grp">' +
+    '<button class="m-i">' + ic('user') + 'โปรไฟล์ของฉัน</button>' +
+    '<button class="m-i">' + ic('doc') + 'รายงานของฉัน</button>' +
+    '<button class="m-i">' + ic('bell') + 'การแจ้งเตือน<span class="m-badge">3</span></button>' +
+  '</div>' +
+  '<div class="m-sep"></div>' +
+  '<div class="m-grp">' +
+    '<button class="m-i danger">' + ic('out') + 'ออกจากระบบ</button>' +
+  '</div>';
+
+var E_SHEET =
+  '<div class="ph-top"><span class="wm">RED ZONE<i>มจพ.</i></span><span class="sp"></span><span class="avatar on">u</span></div>' +
+  '<div class="dimmer"></div>' +
+  '<div class="sheet">' +
+    '<div class="grab"></div>' +
+    '<div class="sh-head"><span class="avatar">u</span><span><b>user123</b><span>1000000123 · นักศึกษา</span></span></div>' +
+    '<div class="m-sep"></div>' +
+    '<button class="sh-i">' + ic('user') + 'โปรไฟล์ของฉัน</button>' +
+    '<button class="sh-i">' + ic('doc') + 'รายงานของฉัน</button>' +
+    '<button class="sh-i">' + ic('moon') + 'ธีม: ตามเครื่อง</button>' +
+    '<div class="m-sep"></div>' +
+    '<button class="sh-i danger">' + ic('out') + 'ออกจากระบบ</button>' +
+  '</div>';
+
+var F_MENU =
+  '<div class="mh"><b>user123</b><span>1000000123 · นักศึกษา</span></div>' +
+  '<div class="m-grp">' +
+    '<button class="mi">โปรไฟล์ของฉัน</button>' +
+    '<button class="mi">รายงานของฉัน</button>' +
+    '<button class="mi">การแจ้งเตือน</button>' +
+  '</div>' +
+  '<div class="m-sep"></div>' +
+  '<div class="lbl">ธีม</div>' +
+  '<div class="seg"><button class="on">ตามเครื่อง</button><button>สว่าง</button><button>มืด</button></div>' +
+  '<div class="m-sep"></div>' +
+  '<div class="m-grp"><button class="mi danger">ออกจากระบบ</button></div>';
+
+document.querySelectorAll('.stage').forEach(function (el) {
+  var v = el.getAttribute('data-v');
+  if (v === 'e') { el.innerHTML = '<div class="phone">' + E_SHEET + '</div>'; return; }
+  var inner = v === 'd' ? D_MENU : F_MENU;
+  var cls = v === 'f' ? 'menu mini' : 'menu';
+  el.innerHTML =
+    '<div class="topbar"><span class="wm">RED ZONE<i>มจพ.</i></span><span class="sp"></span>' +
+      '<span class="avatar on">u</span></div>' +
+    '<div class="menuwrap"><div class="' + cls + '">' + inner + '</div></div>';
+});
+</script>
+</body>
+</html>

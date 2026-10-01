@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RedZone — ออกแบบหน้าแผนที่ใหม่</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Bai+Jamjuree:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#181818;--panel:#222222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;
+  --border:#393939;--border-strong:#4E4E4E;--accent:#EDEDED;--accent-2:#FFFFFF;
+  --on-accent:#1A1A1A;--accent-soft:#333333;--r-l:14px;--r-m:10px;
+  --high:#DE8A81;--mid:#CFAE63;--low:#7FBE97;
+  --high-soft:#332827;--mid-soft:#322E25;--low-soft:#262F2A;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-display:"Bai Jamjuree",system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0E0E0E;color:var(--text);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.page{max-width:1420px;margin:0 auto;padding:30px 20px 90px}
+h1.t{font-family:var(--f-display);font-size:23px;margin:0 0 6px}
+.sub0{color:var(--dim);font-size:14px;margin:0 0 14px}
+.prob{background:#2A2320;border:1px solid #4A3B33;border-radius:10px;padding:12px 14px;font-size:13.5px;color:#E8D9CF;margin:0 0 30px}
+.prob b{color:#fff}
+.prob ul{margin:6px 0 0;padding-left:18px}
+
+.blk{margin:0 0 46px}
+.hd{display:flex;align-items:center;gap:10px;margin:0 0 6px;flex-wrap:wrap}
+.tag{background:var(--accent);color:var(--on-accent);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
+.tag.now{background:var(--border-strong);color:var(--text)}
+.hd b.h{font-size:16px;font-weight:600}
+.why{color:var(--dim);font-size:13px;margin:0 0 12px;max-width:80ch}
+.why b{color:var(--text)}
+
+/* fake browser frame */
+.frame{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--bg)}
+.fbar{background:var(--panel);border-bottom:1px solid var(--border);padding:7px 12px;display:flex;align-items:center;gap:7px}
+.fdot{width:10px;height:10px;border-radius:50%;background:var(--border-strong)}
+.fbar span{margin-left:8px;color:var(--dim);font-size:11.5px}
+.body{padding:16px}
+
+/* toolbar mock */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.search{flex:1;min-width:180px;display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:8px 14px;color:var(--dim);font-size:13px}
+.chip{padding:6px 12px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--dim);background:var(--panel);display:inline-flex;align-items:center;gap:6px}
+.chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.chip .d{width:7px;height:7px;border-radius:999px}
+
+/* fake map */
+.map{position:relative;background:#1E1E1E;background-image:
+  linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),
+  radial-gradient(circle at 30% 60%, rgba(127,190,151,.10), transparent 40%),
+  radial-gradient(circle at 70% 30%, rgba(222,138,129,.08), transparent 45%);
+  background-size:38px 38px,38px 38px,100% 100%,100% 100%;
+  border:1px solid var(--border);border-radius:var(--r-l);overflow:hidden}
+.map .pins{position:absolute;inset:0}
+.map .pin{position:absolute;width:13px;height:13px;border-radius:999px;border:2px solid rgba(0,0,0,.5)}
+.map .scope{position:absolute;border:1.5px dashed rgba(255,255,255,.18);border-radius:999px}
+.map .lg{position:absolute;left:12px;bottom:12px;background:rgba(34,34,34,.9);border:1px solid var(--border);border-radius:var(--r-m);padding:8px 11px;font-size:11px;color:var(--dim);display:grid;gap:4px}
+.map .lg i{display:inline-block;width:8px;height:8px;border-radius:999px;margin-right:7px}
+.map .zoom{position:absolute;left:12px;top:12px;display:grid;background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.map .zoom span{width:28px;height:28px;display:grid;place-items:center;font-size:15px;color:var(--text);border-bottom:1px solid var(--border)}
+.map .zoom span:last-child{border-bottom:none}
+
+/* panel bits */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-l);overflow:hidden;display:flex;flex-direction:column}
+.sect{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--elev);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--dim);flex:none}
+.sect .count{margin-left:auto;font-family:var(--f-mono);font-size:11px;font-weight:400}
+.feed{overflow-y:auto;flex:1;min-height:0}
+.item{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);align-items:start;cursor:pointer}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--elev)}
+.item.sel{background:var(--accent-soft)}
+.sev{width:9px;height:9px;border-radius:999px;margin-top:6px;flex:none}
+.i-cat{display:inline-block;font-size:10px;font-weight:600;color:var(--dim);background:var(--elev);border:1px solid var(--border);border-radius:999px;padding:1px 7px;margin-bottom:4px}
+.i-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:600;font-size:12.5px;line-height:1.4}
+.meta{color:var(--dim);font-size:11px;margin-top:3px}
+.mono{font-family:var(--f-mono)}
+.pill{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:600}
+.pill.mid{background:var(--mid-soft);color:var(--mid)}
+.pill.st{background:var(--elev);color:var(--dim);font-weight:500}
+.detail{padding:14px}
+.detail h3{font-size:15px;font-weight:600;margin:0 0 10px;line-height:1.35}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:12.5px}
+.kv dt{color:var(--dim);font-size:11.5px;margin:0}
+.kv dd{margin:0}
+.notewrap{margin-top:12px;background:var(--elev);border:1px solid var(--border);border-radius:var(--r-m);padding:10px 12px}
+.notelbl{margin:0 0 5px;font-size:11px;color:var(--dim)}
+.note{margin:0;font-size:14px;font-weight:500}
+.rowbtns{display:flex;gap:8px;margin-top:13px}
+.btn{padding:8px 13px;border-radius:9px;border:1px solid var(--border-strong);background:var(--elev);color:var(--text);font:inherit;font-size:12.5px;cursor:pointer}
+.btn.pri{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.back{display:flex;align-items:center;gap:7px;padding:10px 14px;width:100%;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;flex:none}
+
+.tip{color:var(--dim);font-size:11.5px;margin:9px 0 0}
+.voidmark{position:absolute;inset:auto 0 0 0;height:180px;display:grid;place-items:center;color:#6b5a55;font-size:12.5px;border:1px dashed #4A3B33;border-radius:10px;margin:10px 0 0;position:static}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1 class="t">หน้าแผนที่ — ออกแบบใหม่ 4 แบบ</h1>
+<p class="sub0">ยังไม่ได้แก้ไฟล์จริง · เดโม่กดเล่นได้</p>
+
+<p class="prob"><b>ปัญหาที่เห็นในจอคุณ</b>
+<ul>
+  <li><b>ช่องว่างดำใต้แผนที่</b> — แผนที่สูง 480px แต่ช่องขวายาวกว่ามาก เลยเหลือพื้นที่ว่างเปล่าครึ่งจอ</li>
+  <li><b>ช่องขวายาวเกินจอ</b> — รายละเอียดกับรายการต่อกันลงมา ต้องเลื่อนทั้งหน้าเพื่อดูรายการ แผนที่ก็เลื่อนหายไปด้วย</li>
+  <li><b>แผนที่ซูมออกกว้างเกิน</b> — เห็นทั้งกรุงเทพฯ ทั้งที่ขอบเขตจริงแค่ 10 กม. รอบ มจพ. หมุดกองรวมกันเป็นกระจุกเล็กๆ</li>
+</ul>
+</p>
+
+<!-- ================= 1 ================= -->
+<div class="blk">
+  <div class="hd"><span class="tag">แบบ 1</span><b class="h">สูงเท่ากันทั้งสองฝั่ง — แผนที่ตรึงอยู่กับที่</b></div>
+  <p class="why">กำหนดให้แถวนี้สูงเท่าจอพอดี แผนที่เต็มความสูง ช่องขวาเลื่อนอยู่ข้างในตัวเอง · <b>ช่องว่างดำหายไปเลย</b> และเลื่อนดูรายการได้โดยแผนที่ไม่ขยับ — เป็นรูปแบบมาตรฐานของเว็บแผนที่ทั่วไป</p>
+  <div class="frame">
+    <div class="fbar"><i class="fdot"></i><i class="fdot"></i><i class="fdot"></i><span>redzone.infinityfreeapp.com</span></div>
+    <div class="body">
+      <div class="toolbar">
+        <div class="search">🔍 ค้นหาอาคาร ประเภทเหตุ หรือเลขรายงาน</div>
+        <span class="chip on">ทั้งหมด</span>
+        <span class="chip"><i class="d" style="background:var(--high)"></i>เสี่ยงสูง</span>
+        <span class="chip"><i class="d" style="background:var(--mid)"></i>เฝ้าระวัง</span>
+        <span class="chip"><i class="d" style="background:var(--low)"></i>ทั่วไป</span>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:16px;height:540px">
+        <div class="map">
+          <div class="zoom"><span>+</span><span>−</span></div>
+          <div class="scope" style="left:50%;top:50%;width:300px;height:300px;transform:translate(-50%,-50%)"></div>
+          <div class="pins">
+            <i class="pin" style="background:var(--high);left:48%;top:44%"></i>
+            <i class="pin" style="background:var(--mid);left:53%;top:47%"></i>
+            <i class="pin" style="background:var(--low);left:45%;top:52%"></i>
+            <i class="pin" style="background:var(--high);left:56%;top:55%"></i>
+            <i class="pin" style="background:var(--mid);left:50%;top:60%"></i>
+          </div>
+          <div class="lg"><div><i style="background:var(--high)"></i>เสี่ยงสูง</div><div><i style="background:var(--mid)"></i>เฝ้าระวัง</div><div><i style="background:var(--low)"></i>ทั่วไป</div></div>
+        </div>
+        <div class="panel">
+          <div class="sect"><span>เหตุการณ์ที่เลือก</span></div>
+          <div class="detail" style="border-bottom:1px solid var(--border)">
+            <h3>ไฟส่องสว่างชำรุด — ทางเดินริมคลองบางซื่อ</h3>
+            <dl class="kv">
+              <dt>เลขรายงาน</dt><dd class="mono">RZ-2569-0156</dd>
+              <dt>สถานะ</dt><dd><span class="pill st">กำลังดำเนินการ</span></dd>
+            </dl>
+            <div class="notewrap"><p class="notelbl">รายละเอียดจากผู้แจ้ง</p><p class="note">ไฟดับตลอดแนวทางเดิน มืดมากช่วงกลางคืน</p></div>
+            <div class="rowbtns"><button class="btn pri">แจ้งเหตุที่จุดนี้</button><button class="btn">ฉันพบเหตุนี้ด้วย</button></div>
+          </div>
+          <div class="sect"><span>เหตุการณ์ใกล้ฉัน</span><span class="count">14</span></div>
+          <div class="feed">
+            <div class="item sel"><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">ไฟส่องสว่างชำรุด</span><span class="i-desc">ไฟดับตลอดแนวทางเดิน มืดมากช่วงกลางคืน</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:36</span></span></div>
+            <div class="item"><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">ลักทรัพย์/ทรัพย์สินเสียหาย</span><span class="i-desc">จักรยานหน้าตึกหาย โซ่ถูกตัด</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:06</span></span></div>
+            <div class="item"><i class="sev" style="background:var(--high)"></i><span><span class="i-cat">การคุกคาม/ตามรบกวน</span><span class="i-desc">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</span><span class="meta">ประตูวงศ์สว่าง · 15:55</span></span></div>
+            <div class="item"><i class="sev" style="background:var(--low)"></i><span><span class="i-cat">ทางเดิน/พื้นชำรุด</span><span class="i-desc">พื้นแตกร้าว ต่างระดับ 4 ซม.</span><span class="meta">หน้าหอสมุดกลาง · 12:10</span></span></div>
+            <div class="item"><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">น้ำท่วมขัง/สิ่งกีดขวาง</span><span class="i-desc">น้ำขังสูง 10 ซม. เดินเลี่ยงไม่ได้</span><span class="meta">ทางเดินริมคลองบางซื่อ · 08:20</span></span></div>
+            <div class="item"><i class="sev" style="background:var(--high)"></i><span><span class="i-cat">อุบัติเหตุจราจร</span><span class="i-desc">มอเตอร์ไซค์ขี่สวนเลนบนทางเท้า</span><span class="meta">ประตูพิบูลสงคราม · 07:45</span></span></div>
+          </div>
+        </div>
+      </div>
+      <p class="tip">↑ ลองเลื่อนในช่องขวา — แผนที่อยู่นิ่ง</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 2 ================= -->
+<div class="blk">
+  <div class="hd"><span class="tag">แบบ 2</span><b class="h">รายละเอียดลอยบนแผนที่</b></div>
+  <p class="why">ช่องขวาเหลือ<b>รายการอย่างเดียว</b> กดแล้วรายละเอียดเด้งขึ้นมาเป็นการ์ดลอยมุมซ้ายล่างของแผนที่ · ได้เห็นหมุดกับรายละเอียดพร้อมกัน ไม่ต้องเลื่อนหา แบบเดียวกับ Google Maps</p>
+  <div class="frame">
+    <div class="fbar"><i class="fdot"></i><i class="fdot"></i><i class="fdot"></i><span>redzone.infinityfreeapp.com</span></div>
+    <div class="body">
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;height:520px">
+        <div class="map" id="m2">
+          <div class="zoom"><span>+</span><span>−</span></div>
+          <div class="scope" style="left:50%;top:50%;width:320px;height:320px;transform:translate(-50%,-50%)"></div>
+          <div class="pins">
+            <i class="pin" style="background:var(--high);left:48%;top:40%"></i>
+            <i class="pin" style="background:var(--mid);left:55%;top:46%;box-shadow:0 0 0 5px rgba(207,174,99,.25)"></i>
+            <i class="pin" style="background:var(--low);left:43%;top:52%"></i>
+            <i class="pin" style="background:var(--high);left:58%;top:58%"></i>
+          </div>
+          <div class="panel" id="float2" style="position:absolute;left:14px;bottom:14px;width:330px;box-shadow:var(--shadow)">
+            <div class="sect"><span>เหตุการณ์ที่เลือก</span><button id="x2" style="margin-left:auto;background:none;border:none;color:var(--dim);cursor:pointer;font-size:15px">✕</button></div>
+            <div class="detail">
+              <h3>ไฟส่องสว่างชำรุด — ทางเดินริมคลองบางซื่อ</h3>
+              <dl class="kv">
+                <dt>เลขรายงาน</dt><dd class="mono">RZ-2569-0156</dd>
+                <dt>ระยะห่าง</dt><dd>752 ม. จาก มจพ.</dd>
+                <dt>สถานะ</dt><dd><span class="pill st">กำลังดำเนินการ</span></dd>
+              </dl>
+              <div class="notewrap"><p class="notelbl">รายละเอียดจากผู้แจ้ง</p><p class="note">ไฟดับตลอดแนวทางเดิน มืดมากช่วงกลางคืน</p></div>
+              <div class="rowbtns"><button class="btn pri">แจ้งเหตุที่จุดนี้</button><button class="btn">ฉันพบเหตุนี้ด้วย</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="sect"><span>เหตุการณ์ใกล้ฉัน</span><span class="count">14</span></div>
+          <div class="feed">
+            <div class="item sel" data-open2><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">ไฟส่องสว่างชำรุด</span><span class="i-desc">ไฟดับตลอดแนวทางเดิน มืดมากช่วงกลางคืน</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:36</span></span></div>
+            <div class="item" data-open2><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">ลักทรัพย์/ทรัพย์สินเสียหาย</span><span class="i-desc">จักรยานหน้าตึกหาย โซ่ถูกตัด</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:06</span></span></div>
+            <div class="item" data-open2><i class="sev" style="background:var(--high)"></i><span><span class="i-cat">การคุกคาม/ตามรบกวน</span><span class="i-desc">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</span><span class="meta">ประตูวงศ์สว่าง · 15:55</span></span></div>
+            <div class="item" data-open2><i class="sev" style="background:var(--low)"></i><span><span class="i-cat">ทางเดิน/พื้นชำรุด</span><span class="i-desc">พื้นแตกร้าว ต่างระดับ 4 ซม.</span><span class="meta">หน้าหอสมุดกลาง · 12:10</span></span></div>
+            <div class="item" data-open2><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">น้ำท่วมขัง/สิ่งกีดขวาง</span><span class="i-desc">น้ำขังสูง 10 ซม. เดินเลี่ยงไม่ได้</span><span class="meta">ทางเดินริมคลองบางซื่อ · 08:20</span></span></div>
+            <div class="item" data-open2><i class="sev" style="background:var(--high)"></i><span><span class="i-cat">อุบัติเหตุจราจร</span><span class="i-desc">มอเตอร์ไซค์ขี่สวนเลนบนทางเท้า</span><span class="meta">ประตูพิบูลสงคราม · 07:45</span></span></div>
+          </div>
+        </div>
+      </div>
+      <p class="tip">↑ กดรายการทางขวาเพื่อเปิดการ์ด · กด ✕ เพื่อปิด</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 3 ================= -->
+<div class="blk">
+  <div class="hd"><span class="tag">แบบ 3</span><b class="h">แผนที่เต็มความกว้าง + รายการเป็นการ์ดข้างล่าง</b></div>
+  <p class="why">เลิกแบ่งซ้าย-ขวา · แผนที่กว้างเต็มจอด้านบน แล้วรายการเรียงเป็นการ์ด 3 ใบต่อแถวข้างล่าง · <b>แผนที่ใหญ่ที่สุดในทุกแบบ</b> และบนมือถือกลายเป็นการ์ดเรียงลงมาเองโดยไม่ต้องทำอะไรเพิ่ม</p>
+  <div class="frame">
+    <div class="fbar"><i class="fdot"></i><i class="fdot"></i><i class="fdot"></i><span>redzone.infinityfreeapp.com</span></div>
+    <div class="body">
+      <div class="map" style="height:360px;margin-bottom:14px">
+        <div class="zoom"><span>+</span><span>−</span></div>
+        <div class="scope" style="left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%)"></div>
+        <div class="pins">
+          <i class="pin" style="background:var(--high);left:47%;top:38%"></i>
+          <i class="pin" style="background:var(--mid);left:52%;top:45%"></i>
+          <i class="pin" style="background:var(--low);left:44%;top:56%"></i>
+          <i class="pin" style="background:var(--high);left:55%;top:62%"></i>
+          <i class="pin" style="background:var(--mid);left:50%;top:50%"></i>
+        </div>
+        <div class="lg"><div><i style="background:var(--high)"></i>เสี่ยงสูง</div><div><i style="background:var(--mid)"></i>เฝ้าระวัง</div><div><i style="background:var(--low)"></i>ทั่วไป</div></div>
+      </div>
+      <div class="sect" style="border:1px solid var(--border);border-radius:var(--r-m);margin-bottom:12px"><span>เหตุการณ์ใกล้ฉัน</span><span class="count">14</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px">
+        <div class="panel" style="padding:13px;cursor:pointer"><span class="i-cat">ไฟส่องสว่างชำรุด</span><span class="i-desc">ไฟดับตลอดแนวทางเดิน มืดมากช่วงกลางคืน</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:36</span></div>
+        <div class="panel" style="padding:13px;cursor:pointer"><span class="i-cat">ลักทรัพย์/ทรัพย์สินเสียหาย</span><span class="i-desc">จักรยานหน้าตึกหาย โซ่ถูกตัด</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:06</span></div>
+        <div class="panel" style="padding:13px;cursor:pointer"><span class="i-cat">การคุกคาม/ตามรบกวน</span><span class="i-desc">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</span><span class="meta">ประตูวงศ์สว่าง · 15:55</span></div>
+        <div class="panel" style="padding:13px;cursor:pointer"><span class="i-cat">ทางเดิน/พื้นชำรุด</span><span class="i-desc">พื้นแตกร้าว ต่างระดับ 4 ซม.</span><span class="meta">หน้าหอสมุดกลาง · 12:10</span></div>
+        <div class="panel" style="padding:13px;cursor:pointer"><span class="i-cat">น้ำท่วมขัง/สิ่งกีดขวาง</span><span class="i-desc">น้ำขังสูง 10 ซม. เดินเลี่ยงไม่ได้</span><span class="meta">ทางเดินริมคลองบางซื่อ · 08:20</span></div>
+        <div class="panel" style="padding:13px;cursor:pointer"><span class="i-cat">อุบัติเหตุจราจร</span><span class="i-desc">มอเตอร์ไซค์ขี่สวนเลนบนทางเท้า</span><span class="meta">ประตูพิบูลสงคราม · 07:45</span></div>
+      </div>
+      <p class="tip">กดการ์ดแล้วรายละเอียดเปิดเป็นหน้าต่างซ้อนกลางจอ</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 4 ================= -->
+<div class="blk">
+  <div class="hd"><span class="tag">แบบ 4</span><b class="h">แผนที่เป็นพระเอก — แผงลอยทับบนแผนที่</b></div>
+  <p class="why">แผนที่กินพื้นที่ทั้งหมด รายการลอยทับอยู่ด้านขวาแบบโปร่งแสง · ดูทันสมัยที่สุด แต่<b>อ่านยากกว่าเพื่อน</b>เพราะตัวหนังสือซ้อนบนภาพแผนที่ และบนจอเล็กแผงจะบังแผนที่เกือบหมด</p>
+  <div class="frame">
+    <div class="fbar"><i class="fdot"></i><i class="fdot"></i><i class="fdot"></i><span>redzone.infinityfreeapp.com</span></div>
+    <div class="map" style="height:520px;border-radius:0;border:none;border-top:1px solid var(--border)">
+      <div class="zoom"><span>+</span><span>−</span></div>
+      <div class="scope" style="left:42%;top:50%;width:340px;height:340px;transform:translate(-50%,-50%)"></div>
+      <div class="pins">
+        <i class="pin" style="background:var(--high);left:38%;top:40%"></i>
+        <i class="pin" style="background:var(--mid);left:44%;top:46%"></i>
+        <i class="pin" style="background:var(--low);left:34%;top:54%"></i>
+        <i class="pin" style="background:var(--high);left:47%;top:60%"></i>
+      </div>
+      <div style="position:absolute;left:16px;top:16px;right:390px;display:flex;gap:8px;flex-wrap:wrap">
+        <div class="search" style="backdrop-filter:blur(8px);background:rgba(34,34,34,.85)">🔍 ค้นหาอาคาร ประเภทเหตุ หรือเลขรายงาน</div>
+      </div>
+      <div class="panel" style="position:absolute;right:16px;top:16px;bottom:16px;width:358px;background:rgba(34,34,34,.88);backdrop-filter:blur(10px);box-shadow:var(--shadow)">
+        <div class="sect" style="background:rgba(46,46,46,.8)"><span>เหตุการณ์ใกล้ฉัน</span><span class="count">14</span></div>
+        <div class="feed">
+          <div class="item sel"><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">ไฟส่องสว่างชำรุด</span><span class="i-desc">ไฟดับตลอดแนวทางเดิน มืดมากช่วงกลางคืน</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:36</span></span></div>
+          <div class="item"><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">ลักทรัพย์/ทรัพย์สินเสียหาย</span><span class="i-desc">จักรยานหน้าตึกหาย โซ่ถูกตัด</span><span class="meta">ทางเดินริมคลองบางซื่อ · 16:06</span></span></div>
+          <div class="item"><i class="sev" style="background:var(--high)"></i><span><span class="i-cat">การคุกคาม/ตามรบกวน</span><span class="i-desc">มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก</span><span class="meta">ประตูวงศ์สว่าง · 15:55</span></span></div>
+          <div class="item"><i class="sev" style="background:var(--low)"></i><span><span class="i-cat">ทางเดิน/พื้นชำรุด</span><span class="i-desc">พื้นแตกร้าว ต่างระดับ 4 ซม.</span><span class="meta">หน้าหอสมุดกลาง · 12:10</span></span></div>
+          <div class="item"><i class="sev" style="background:var(--mid)"></i><span><span class="i-cat">น้ำท่วมขัง/สิ่งกีดขวาง</span><span class="i-desc">น้ำขังสูง 10 ซม. เดินเลี่ยงไม่ได้</span><span class="meta">ทางเดินริมคลองบางซื่อ · 08:20</span></span></div>
+          <div class="item"><i class="sev" style="background:var(--high)"></i><span><span class="i-cat">อุบัติเหตุจราจร</span><span class="i-desc">มอเตอร์ไซค์ขี่สวนเลนบนทางเท้า</span><span class="meta">ประตูพิบูลสงคราม · 07:45</span></span></div>
+        </div>
+      </div>
+      <div class="lg"><div><i style="background:var(--high)"></i>เสี่ยงสูง</div><div><i style="background:var(--mid)"></i>เฝ้าระวัง</div><div><i style="background:var(--low)"></i>ทั่วไป</div></div>
+    </div>
+  </div>
+</div>
+
+<p class="why" style="max-width:none">
+<b>ทุกแบบผมจะแก้เรื่องซูมให้ด้วย</b> — ตอนเปิดหน้าจะซูมให้พอดีกับหมุดที่มีจริง แทนที่จะเปิดมาเห็นทั้งกรุงเทพฯ แบบตอนนี้<br>
+<b>บนมือถือ</b> ทุกแบบยังเป็นคอลัมน์เดียว กดรายการแล้วเปิดรายละเอียดเต็มช่องพร้อมปุ่มย้อนกลับ เหมือนที่ทำไว้แล้ว
+</p>
+
+<script>
+(function(){
+  var f = document.getElementById('float2');
+  document.getElementById('x2').onclick = function(){ f.style.display='none'; };
+  document.querySelectorAll('[data-open2]').forEach(function(it){
+    it.onclick = function(){
+      document.querySelectorAll('[data-open2]').forEach(function(x){ x.classList.remove('sel'); });
+      it.classList.add('sel');
+      f.style.display='flex';
+      f.querySelector('h3').textContent = it.querySelector('.i-cat').textContent + ' — ' + it.querySelector('.meta').textContent.split(' · ')[0];
+      f.querySelector('.note').textContent = it.querySelector('.i-desc').textContent;
+    };
+  });
+})();
+</script>
+
+</div>
+</body>
+</html>

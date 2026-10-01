@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ออกแบบหน้าแผนที่ใหม่</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --f-display:"Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --bg:#181818;--panel:#222222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;--border:#393939;
+  --border-strong:#4E4E4E;--accent:#E0574C;--on-accent:#1A1010;--accent-soft:#33211F;
+  --high:#DE8A81;--mid:#CFAE63;--low:#7FBE97;
+  --high-soft:#332827;--mid-soft:#322E25;--low-soft:#262F2A;
+  --r-s:6px;--r-m:10px;--r-l:16px;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:var(--f-body)}
+body{background:#0E0E10;color:var(--text);padding:28px 18px 80px;line-height:1.55}
+.page{max-width:1340px;margin:0 auto}
+h1{font-family:var(--f-display);font-size:23px;font-weight:700;margin-bottom:6px}
+.lede{color:var(--dim);font-size:13px;margin-bottom:26px;max-width:78ch}
+.opt{margin-bottom:40px}
+.opt-h{display:flex;align-items:baseline;gap:11px;margin-bottom:4px;flex-wrap:wrap}
+.tag{font-family:var(--f-display);font-weight:700;font-size:12.5px;background:#232326;
+     border:1px solid #35353A;border-radius:999px;padding:2px 12px}
+.opt-h b{font-size:15.5px;font-weight:600}
+.opt-note{color:#8F8F95;font-size:12.5px;margin-bottom:14px;max-width:84ch}
+
+/* เวทีจำลองหน้าแผนที่ */
+.stage{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:16px;overflow:hidden}
+.vhead .eyebrow{font-size:11px;color:var(--dim)}
+.vhead h2{font-family:var(--f-display);font-size:21px;font-weight:600;margin:2px 0 3px}
+.vhead p{color:var(--dim);font-size:12px;margin-bottom:12px}
+.toolbar{display:flex;gap:9px;margin-bottom:12px;flex-wrap:wrap}
+.search{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;background:var(--panel);
+        border:1px solid var(--border);border-radius:999px;padding:8px 14px;color:var(--dim);font-size:12.5px}
+.chip{padding:6px 12px;border:1px solid var(--border);border-radius:999px;font-size:11.5px;color:var(--dim);
+      background:var(--panel);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+.chip i{width:7px;height:7px;border-radius:999px;display:inline-block}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 470px;gap:16px;align-items:start}
+.mapbox{height:560px;border:1px solid var(--border);border-radius:var(--r-l);position:relative;overflow:hidden;
+        background:radial-gradient(circle at 45% 45%,#242424,#1a1a1a)}
+.ring{position:absolute;left:50%;top:48%;width:330px;height:330px;margin:-165px 0 0 -165px;
+      border:1.5px dashed #5A5A5A;border-radius:999px}
+.pin{position:absolute;border-radius:999px;border:2px solid #fff;display:grid;place-items:center;
+     font-family:var(--f-mono);font-size:11px;font-weight:600;color:#fff}
+.pin.sel{outline:3px solid var(--accent);outline-offset:3px}
+.pin.done{background:none!important;border:2px dashed var(--low);color:var(--low)}
+
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-l);overflow:hidden}
+.pnl-scroll{max-height:560px;overflow-y:auto}
+.pnl-scroll::-webkit-scrollbar{width:7px}
+.pnl-scroll::-webkit-scrollbar-thumb{background:#3A3A3A;border-radius:99px}
+.back{display:flex;align-items:center;gap:8px;width:100%;padding:11px 14px;border-bottom:1px solid var(--border);
+      font-size:12.5px;font-weight:600;color:var(--text);background:var(--elev);text-align:left}
+.back span.n{margin-left:auto;color:var(--dim);font-weight:400;font-family:var(--f-mono);font-size:11px}
+
+/* ===== ก1 โพสต์ ===== */
+.p-hero{position:relative;aspect-ratio:16/10;background:linear-gradient(145deg,#2c2422,#1b1918);
+        display:grid;place-items:center;color:#6E6E6E;font-size:12px}
+.p-count{position:absolute;right:10px;bottom:10px;background:rgba(0,0,0,.6);border-radius:999px;
+         padding:3px 10px;font-size:10.5px;font-family:var(--f-mono);color:#fff}
+.p-sev{position:absolute;left:10px;top:10px;font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px}
+.p-sev.mid{background:var(--mid);color:#1A1A1A}
+.p-body{padding:14px}
+.p-cat{display:inline-block;font-size:10.5px;font-weight:600;color:var(--dim);background:var(--elev);
+       border:1px solid var(--border);border-radius:999px;padding:2px 9px;margin-bottom:8px}
+.p-desc{font-size:15.5px;font-weight:600;line-height:1.5;margin-bottom:10px}
+.p-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.mchip{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--dim);
+       background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:3px 10px}
+.mchip b{color:var(--text);font-weight:600}
+.track{display:flex;align-items:center;margin:4px 0 12px}
+.track i{width:10px;height:10px;border-radius:999px;background:var(--accent);flex:none}
+.track i.off{background:none;border:1.5px solid var(--border-strong)}
+.track u{flex:1;height:2px;background:var(--accent);text-decoration:none}
+.track u.off{background:var(--border)}
+.tracklb{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-bottom:14px}
+.tracklb span.on{color:var(--text);font-weight:600}
+.acts{display:flex;gap:8px;margin-bottom:6px}
+.btn{padding:9px 14px;border-radius:var(--r-m);font-size:12.5px;font-weight:600;border:1px solid var(--border);
+     color:var(--text);background:var(--panel)}
+.btn.pri{background:var(--accent);color:var(--on-accent);border-color:var(--accent);flex:1;text-align:center}
+.more{width:100%;text-align:left;padding:10px 14px;border-top:1px solid var(--border);font-size:12px;color:var(--dim)}
+.techrow{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;padding:0 14px 12px;font-size:11.5px}
+.techrow dt{color:var(--dim)}
+.techrow dd{font-family:var(--f-mono)}
+.cmt{padding:12px 14px;border-top:1px solid var(--border)}
+.cmt-h{font-size:12px;font-weight:600;margin-bottom:9px;color:var(--dim)}
+.cmt-in{display:flex;gap:7px}
+.cmt-in span{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:7px 12px;
+             font-size:12px;color:var(--dim)}
+
+/* ===== ก2 แท็บ ===== */
+.t-head{padding:13px 14px;border-bottom:1px solid var(--border)}
+.t-top{display:flex;gap:9px;align-items:flex-start}
+.t-top h3{font-family:var(--f-display);font-size:16px;font-weight:600;flex:1;line-height:1.35}
+.sevpill{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.sevpill.mid{background:var(--mid-soft);color:var(--mid)}
+.sevpill.low{background:var(--low-soft);color:var(--low)}
+.t-sub{color:var(--dim);font-size:11px;font-family:var(--f-mono);margin-top:4px}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--border);background:var(--elev)}
+.tabs button{padding:10px 12px;font-size:12.5px;color:var(--dim);border-bottom:2px solid transparent}
+.tabs button.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tabbody{padding:14px}
+.quote{background:var(--bg);border-left:2px solid var(--accent);border-radius:0 var(--r-m) var(--r-m) 0;
+       padding:11px 13px;font-size:14px;font-weight:500;line-height:1.6;margin-bottom:12px}
+
+/* ===== ก3 ไทม์ไลน์ ===== */
+.tl{padding:14px 14px 6px}
+.tl-item{display:grid;grid-template-columns:auto 1fr;gap:12px;padding-bottom:16px;position:relative}
+.tl-item::before{content:"";position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:18px;height:18px;border-radius:999px;border:2px solid var(--panel);
+        display:grid;place-items:center;font-size:9px;color:#1A1A1A;font-weight:700;z-index:1}
+.tl-c{min-width:0}
+.tl-t{font-size:12.5px;font-weight:600}
+.tl-d{color:var(--dim);font-size:10.5px;font-family:var(--f-mono);margin-bottom:6px}
+.tl-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-m);padding:10px 12px;font-size:13px;line-height:1.55}
+.tl-ph{aspect-ratio:16/10;border-radius:var(--r-m);border:1px solid var(--border);display:grid;place-items:center;
+       font-size:11px;color:#6E6E6E;margin-top:8px}
+.tl-ph.b{background:linear-gradient(145deg,#2c2422,#1b1918)}
+.tl-ph.a{background:linear-gradient(145deg,#232b26,#1a1d1b)}
+.pending{opacity:.5}
+
+.warn{border-left:2px solid var(--accent);padding:10px 14px;margin-top:18px;color:#B9B2B1;font-size:12.5px;max-width:86ch}
+.warn b{color:var(--text);font-weight:600}
+.badnote{background:#2A1D1C;border:1px solid #4A2F2C;border-radius:var(--r-m);padding:12px 14px;
+         font-size:12.5px;color:#C9B8B6;margin-bottom:22px;max-width:92ch}
+.badnote b{color:var(--text)}
+.badnote ul{margin:7px 0 0 18px}
+.badnote li{margin-bottom:3px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>หน้าแผนที่ — ออกแบบแผงขวาใหม่</h1>
+<p class="lede">ทุกแบบใช้โครง ก (จัดกลุ่มตามจุด) เหมือนกัน คือมีปุ่มย้อนกลับไปจุดอยู่ด้านบน ต่างกันที่วิธีจัดเนื้อหาของโพสต์ที่เลือก</p>
+
+<div class="badnote">
+  <b>ทำไมตอนนี้อ่านยาก</b> — ผมไล่ดูจากภาพที่ส่งมา เจอ 4 เรื่อง
+  <ul>
+    <li>ข้อมูล 9 บรรทัดขึ้นก่อนเนื้อหา กว่าจะถึงคำอธิบายจริงของผู้แจ้งต้องกวาดตาผ่าน เลขรายงาน ตำแหน่ง ประเภท พบเมื่อ พิกัด ระยะห่าง สถานะ ผู้แจ้ง ยืนยันโดย</li>
+    <li>ทุกบรรทัดตัวเท่ากันหมด ไม่มีอะไรเด่นกว่าอะไร สายตาไม่รู้จะเกาะตรงไหน</li>
+    <li>ข้อมูลที่แทบไม่มีใครใช้อย่างพิกัด 13.81706, 100.52091 กินที่เท่ากับเนื้อหาจริง</li>
+    <li>รายการเหตุการณ์อื่นถูกดันลงไปอยู่ใต้ความคิดเห็น ต้องเลื่อนยาวมากกว่าจะเจอ</li>
+  </ul>
+</div>
+
+<!-- ============ ก1 ============ -->
+<div class="opt">
+  <div class="opt-h"><span class="tag">1</span><b>แบบโพสต์ — เอารูปกับเนื้อหาขึ้นก่อน</b></div>
+  <p class="opt-note">รูปขึ้นเต็มความกว้างเป็นอย่างแรก ตามด้วยคำอธิบายของผู้แจ้งเป็นตัวใหญ่สุดในการ์ด ข้อมูลอื่นยุบเป็นชิปเล็ก ๆ แถวเดียว ส่วนข้อมูลเทคนิคอย่างพิกัดกับเลขรายงานซ่อนไว้หลังปุ่ม "ดูข้อมูลทางเทคนิค" · อ่านง่ายสุด เหมือนดูโพสต์ในแอปทั่วไป</p>
+  <div class="stage" data-v="1"></div>
+</div>
+
+<!-- ============ ก2 ============ -->
+<div class="opt">
+  <div class="opt-h"><span class="tag">2</span><b>แบบแท็บ — แบ่งเนื้อหาเป็นหน้าย่อย</b></div>
+  <p class="opt-note">ส่วนหัวสรุปสั้น ๆ ค้างไว้เสมอ แล้วแบ่งเนื้อหาเป็น 4 แท็บ รายละเอียด / รูปภาพ / ความคืบหน้า / ความคิดเห็น · ข้อดีคือแผงไม่ยาว ไม่ต้องเลื่อนเลย รายการเหตุการณ์อื่นอยู่ใกล้แค่เอื้อม ข้อเสียคือต้องกดหลายที</p>
+  <div class="stage" data-v="2"></div>
+</div>
+
+<!-- ============ ก3 ============ -->
+<div class="opt">
+  <div class="opt-h"><span class="tag">3</span><b>แบบไทม์ไลน์ — เล่าเป็นลำดับเวลา</b></div>
+  <p class="opt-note">อ่านเรื่องเป็นเส้นเวลาจากบนลงล่าง ผู้แจ้งบอกอะไรพร้อมรูป → เจ้าหน้าที่รับเรื่อง → กำลังดำเนินการ → แก้ไขแล้วพร้อมรูปหลังแก้ · รูปก่อนกับหลังอยู่คนละหัวคนละท้ายของเส้นเวลาพอดี เข้ากับระบบแก้ไขแล้วที่กำลังจะทำที่สุด และตอบคำถาม "เรื่องนี้ถึงไหนแล้ว" ได้ในภาพเดียว</p>
+  <div class="stage" data-v="3"></div>
+</div>
+
+<div class="warn">
+  <b>ความเห็นผม</b> — <b>แบบ 3</b> เข้ากับทิศทางที่คุณกำลังไปมากที่สุด เพราะระบบแก้ไขแล้วที่จะทำจะมีรูปก่อน-หลัง
+  มีบันทึกว่าเจ้าหน้าที่ทำอะไร มีวันที่ปิดเรื่อง ของพวกนี้วางลงเส้นเวลาได้พอดีโดยไม่ต้องหาที่ยัด
+  ส่วน <b>แบบ 1</b> อ่านสบายที่สุดถ้าดูโพสต์เดี่ยว ๆ แต่พอเพิ่มข้อมูลการแก้ไขเข้าไปจะเริ่มยาว
+  และ <b>แบบ 2</b> แผงสั้นที่สุด แต่ข้อมูลกระจายอยู่หลังแท็บ ต้องกดหาเอง ซึ่งเป็นคนละปัญหากับที่คุณบ่นมา
+  <br><br>
+  ถ้าจะให้ดีที่สุดคือ <b>เอา 3 เป็นโครง แล้วยืมวิธีของ 1 มาใช้ในขั้นแรกของเส้นเวลา</b> คือให้รูปกับคำอธิบายของผู้แจ้งเด่นกว่าขั้นอื่น
+</div>
+
+</div>
+
+<script>
+function MAP(sel){
+  var pins = [[47,44,'high',16],[50,47,'mid',16],[44,49,'high',16],[52,51,'mid',16],[46,53,'low',16],
+              [49,42,'mid',16],[53,46,'high',16],[45,45,'mid',16],[51,54,'low',16],[48,50,'mid',16],
+              [43,46,'mid',16],[54,50,'mid',16],[68,30,'mid',16],[30,70,'low',16],[70,68,'mid',16]];
+  var h = '<div class="ring"></div>';
+  if (sel === 'cluster') {
+    h += pinHtml(48,48,'high',46,'12',true) + pinHtml(68,30,'mid',18,'') +
+         pinHtml(30,70,'low',18,'') + pinHtml(70,68,'mid',18,'');
+  } else {
+    h += pins.map(function(p){ return pinHtml(p[0],p[1],p[2],p[3],''); }).join('');
+  }
+  return h;
+}
+function pinHtml(x,y,sev,size,label,selp){
+  var c = sev==='high'?'var(--high)':sev==='mid'?'var(--mid)':'var(--low)';
+  return '<span class="pin'+(selp?' sel':'')+'" style="left:'+x+'%;top:'+y+'%;width:'+size+'px;height:'+size+'px;'+
+    'margin-left:'+(-size/2)+'px;margin-top:'+(-size/2)+'px;background:'+c+'">'+(label||'')+'</span>';
+}
+
+var HEAD =
+  '<div class="vhead"><div class="eyebrow">ขอบเขตพื้นที่ให้บริการ · รัศมี 10 กม. รอบ มจพ.</div>' +
+  '<h2>แผนที่พื้นที่เสี่ยง</h2>' +
+  '<p>เหตุการณ์ที่ยังไม่ปิด 14 รายการ · 4 จุด · อัปเดตล่าสุดวันนี้ 16:36</p></div>' +
+  '<div class="toolbar">' +
+    '<div class="search">⌕ ค้นหาอาคาร ประเภทเหตุ หรือเลขรายงาน</div>' +
+    '<span class="chip on">ทั้งหมด</span>' +
+    '<span class="chip"><i style="background:var(--high)"></i>เสี่ยงสูง</span>' +
+    '<span class="chip"><i style="background:var(--mid)"></i>เฝ้าระวัง</span>' +
+    '<span class="chip"><i style="background:var(--low)"></i>ทั่วไป</span>' +
+  '</div>';
+
+var BACK = '<button class="back">‹ <span>ทางเดินริมคลองบางซื่อ</span><span class="n">12 เรื่อง</span></button>';
+
+var TRACK =
+  '<div class="track"><i></i><u></u><i></i><u></u><i></i><u class="off"></u><i class="off"></i></div>' +
+  '<div class="tracklb"><span>ส่งแล้ว</span><span>รับเรื่อง</span><span class="on">กำลังดำเนินการ</span><span>เสร็จ</span></div>';
+
+var P1 =
+  BACK +
+  '<div class="p-hero"><span class="p-sev mid">เฝ้าระวัง</span>รูปจากผู้แจ้ง<span class="p-count">1 / 2</span></div>' +
+  '<div class="p-body">' +
+    '<span class="p-cat">ไฟส่องสว่างชำรุด</span>' +
+    '<p class="p-desc">ไฟดับ 3 เสาติดกัน ทางเดินมืดมากช่วง 19:00 ถึง 06:00 มีนักศึกษาใช้ทางนี้กลับหอเยอะ</p>' +
+    '<div class="p-meta">' +
+      '<span class="mchip">📍 <b>ทางเดินริมคลองบางซื่อ</b></span>' +
+      '<span class="mchip">🕒 <b>วันนี้ 16:36</b></span>' +
+      '<span class="mchip">👤 <b>ping</b></span>' +
+      '<span class="mchip">✓ ยืนยัน <b>12 คน</b></span>' +
+    '</div>' +
+    TRACK +
+    '<div class="acts"><span class="btn pri">ฉันพบเหตุนี้ด้วย</span><span class="btn">แจ้งเหตุที่จุดนี้</span></div>' +
+  '</div>' +
+  '<button class="more">⌄ ดูข้อมูลทางเทคนิค (เลขรายงาน พิกัด ระยะห่าง)</button>' +
+  '<div class="cmt"><div class="cmt-h">ความคิดเห็น 2</div>' +
+    '<div class="cmt-in"><span>เพิ่มข้อมูลที่เป็นประโยชน์…</span><span class="btn pri" style="flex:none">ส่ง</span></div></div>';
+
+var P2 =
+  BACK +
+  '<div class="t-head"><div class="t-top">' +
+    '<h3>ไฟส่องสว่างชำรุด — ทางเดินริมคลองบางซื่อ</h3><span class="sevpill mid">เฝ้าระวัง</span>' +
+  '</div><div class="t-sub">RZ-2569-0156 · วันนี้ 16:36 · ยืนยัน 12 คน</div></div>' +
+  '<div class="tabs"><button class="on">รายละเอียด</button><button>รูปภาพ <span style="opacity:.7">2</span></button>' +
+    '<button>ความคืบหน้า</button><button>ความคิดเห็น <span style="opacity:.7">2</span></button></div>' +
+  '<div class="tabbody">' +
+    '<p class="quote">ไฟดับ 3 เสาติดกัน ทางเดินมืดมากช่วง 19:00 ถึง 06:00 มีนักศึกษาใช้ทางนี้กลับหอเยอะ</p>' +
+    '<div class="p-meta">' +
+      '<span class="mchip">📍 <b>ทางเดินริมคลองบางซื่อ</b></span>' +
+      '<span class="mchip">👤 <b>ping</b></span>' +
+      '<span class="mchip">📏 <b>752 ม. จาก มจพ.</b></span>' +
+    '</div>' +
+    '<div class="acts"><span class="btn pri">ฉันพบเหตุนี้ด้วย</span><span class="btn">แจ้งเหตุที่จุดนี้</span></div>' +
+  '</div>' +
+  '<div class="back" style="background:var(--elev);border-top:1px solid var(--border);border-bottom:none">' +
+    '<span>เหตุการณ์อื่นที่จุดนี้</span><span class="n">อีก 11 เรื่อง ›</span></div>';
+
+var P3 =
+  BACK +
+  '<div class="t-head"><div class="t-top">' +
+    '<h3>ไฟส่องสว่างชำรุด</h3><span class="sevpill mid">เฝ้าระวัง</span>' +
+  '</div><div class="t-sub">ทางเดินริมคลองบางซื่อ · ยืนยัน 12 คน</div></div>' +
+  '<div class="tl">' +
+    tlItem('var(--accent)','','ผู้แจ้งส่งเรื่อง','ping · วันนี้ 16:36',
+      '<div class="tl-box">ไฟดับ 3 เสาติดกัน ทางเดินมืดมากช่วง 19:00 ถึง 06:00 มีนักศึกษาใช้ทางนี้กลับหอเยอะ</div>' +
+      '<div class="tl-ph b">รูปจากผู้แจ้ง · 2 รูป</div>') +
+    tlItem('var(--accent)','','ผู้ดูแลรับเรื่อง','admin001 · วันนี้ 17:02','') +
+    tlItem('var(--accent)','','กำลังดำเนินการ','ส่งต่องานอาคารสถานที่ · วันนี้ 17:05','') +
+    tlItemPending('แก้ไขแล้ว','รอเจ้าหน้าที่บันทึกผล') +
+  '</div>' +
+  '<div style="padding:0 14px 14px"><div class="acts">' +
+    '<span class="btn pri">ฉันพบเหตุนี้ด้วย</span><span class="btn">แจ้งเหตุที่จุดนี้</span></div></div>' +
+  '<button class="more">⌄ ดูข้อมูลทางเทคนิค (เลขรายงาน พิกัด ระยะห่าง)</button>' +
+  '<div class="cmt"><div class="cmt-h">ความคิดเห็น 2</div>' +
+    '<div class="cmt-in"><span>เพิ่มข้อมูลที่เป็นประโยชน์…</span><span class="btn pri" style="flex:none">ส่ง</span></div></div>';
+
+function tlItem(color,mark,title,date,body){
+  return '<div class="tl-item"><span class="tl-dot" style="background:'+color+'">'+mark+'</span>' +
+    '<div class="tl-c"><div class="tl-t">'+title+'</div><div class="tl-d">'+date+'</div>'+body+'</div></div>';
+}
+function tlItemPending(title,date){
+  return '<div class="tl-item pending"><span class="tl-dot" style="background:none;border:2px dashed var(--border-strong)"></span>' +
+    '<div class="tl-c"><div class="tl-t">'+title+'</div><div class="tl-d">'+date+'</div></div></div>';
+}
+
+var PANELS = {1:P1, 2:P2, 3:P3};
+document.querySelectorAll('.stage').forEach(function(el){
+  var v = el.getAttribute('data-v');
+  el.innerHTML = HEAD +
+    '<div class="grid">' +
+      '<div class="mapbox">' + MAP('cluster') + '</div>' +
+      '<div class="panel"><div class="pnl-scroll">' + PANELS[v] + '</div></div>' +
+    '</div>';
+});
+</script>
+</body>
+</html>

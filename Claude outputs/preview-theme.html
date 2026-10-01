@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตัวอย่างโทนสี RedZone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --f-display:"Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:var(--f-body)}
+body{background:#101012;color:#EDEDED;padding:32px 20px 80px;line-height:1.6}
+.page{max-width:1120px;margin:0 auto}
+h1{font-family:var(--f-display);font-size:24px;font-weight:700;margin-bottom:6px}
+.lede{color:#9B9B9B;font-size:13.5px;margin-bottom:8px;max-width:68ch}
+.warnbox{border-left:2px solid #E0574C;padding:10px 14px;margin:18px 0 30px;color:#B9B2B1;font-size:12.5px;max-width:78ch}
+.warnbox b{color:#EDEDED;font-weight:600}
+
+.opt{margin-bottom:46px}
+.opt-h{display:flex;align-items:baseline;gap:11px;margin-bottom:4px;flex-wrap:wrap}
+.tag{font-family:var(--f-display);font-weight:700;font-size:13px;background:#232326;
+     border:1px solid #35353A;border-radius:999px;padding:3px 13px;color:#EDEDED}
+.opt-h b{font-size:16px;font-weight:600}
+.opt-note{color:#8F8F95;font-size:12.5px;margin-bottom:14px;max-width:76ch}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:820px){.pair{grid-template-columns:1fr}}
+.mode-lbl{font-size:11px;color:#8F8F95;font-family:var(--f-mono);margin-bottom:6px;letter-spacing:.04em}
+
+/* ======== ตัวอย่างหน้าจอ ======== */
+.demo{background:var(--bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;color:var(--text)}
+.d-top{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--panel);border-bottom:1px solid var(--border)}
+.wm{font-family:var(--f-display);font-weight:700;font-size:14px;letter-spacing:.06em;color:var(--brand)}
+.wm span{color:var(--dim);font-weight:500;font-size:11px;margin-left:5px;letter-spacing:0}
+.d-sp{flex:1}
+.ava{width:26px;height:26px;border-radius:999px;background:var(--brand);color:var(--on-brand);
+     display:grid;place-items:center;font-size:11px;font-weight:600}
+.d-body{padding:14px;display:grid;gap:12px}
+.cta{display:inline-flex;align-items:center;gap:7px;background:var(--brand);color:var(--on-brand);
+     border:none;border-radius:9px;padding:9px 15px;font-size:13px;font-weight:600;width:max-content}
+.cta svg{width:15px;height:15px}
+.navrow{display:flex;gap:6px;flex-wrap:wrap}
+.nav-i{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;
+       font-size:12.5px;color:var(--dim);background:transparent}
+.nav-i.on{background:var(--brand-soft);color:var(--brand-ink);font-weight:600}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 11px;border:1px solid var(--border);border-radius:999px;font-size:11.5px;
+      color:var(--dim);background:var(--panel);display:inline-flex;align-items:center;gap:5px}
+.chip.on{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.dot{width:7px;height:7px;border-radius:999px;display:inline-block}
+.item{display:grid;grid-template-columns:auto 1fr;gap:10px;background:var(--panel);
+      border:1px solid var(--border);border-radius:10px;padding:11px 13px;align-items:start}
+.sev{width:9px;height:9px;border-radius:999px;margin-top:5px}
+.i-cat{display:inline-block;font-size:10px;font-weight:600;color:var(--dim);background:var(--elev);
+       border:1px solid var(--border);border-radius:999px;padding:1px 7px;margin-bottom:4px}
+.i-desc{font-weight:600;font-size:12.5px;line-height:1.4;display:block}
+.i-meta{color:var(--dim);font-size:10.5px;margin-top:3px;display:block;font-family:var(--f-mono)}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:10.5px;font-weight:600;border-radius:999px;padding:3px 10px}
+.pill.high{background:var(--high-soft);color:var(--high)}
+.pill.mid{background:var(--mid-soft);color:var(--mid)}
+.pill.low{background:var(--low-soft);color:var(--low)}
+.legend{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:9px 12px;
+        font-size:11px;color:var(--dim);display:grid;gap:4px}
+.legend i{width:8px;height:8px;border-radius:999px;display:inline-block;margin-right:7px;vertical-align:1px}
+.swatches{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.swatches div{flex:1;height:26px}
+.hexrow{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--f-mono);font-size:10px;color:var(--dim);margin-top:2px}
+
+/* ======================= แบบ ก : แดงเลือดหมู–ขาว ======================= */
+.tk-a-light{
+  --bg:#F7F4F3; --panel:#FFFFFF; --elev:#F0EAE9; --text:#241B1A; --dim:#7A6D6B;
+  --border:#E4DAD8; --brand:#8E1B16; --brand-ink:#8E1B16; --on-brand:#FFFFFF; --brand-soft:#F5E4E2;
+  --high:#C0281F; --mid:#8A6410; --low:#2E6B4C;
+  --high-soft:#F8E3E1; --mid-soft:#F4EDDC; --low-soft:#E0EDE6;
+}
+.tk-a-dark{
+  --bg:#16100F; --panel:#201817; --elev:#2C2120; --text:#F1E9E8; --dim:#A2918F;
+  --border:#3A2C2A; --brand:#E2685B; --brand-ink:#F0958B; --on-brand:#1A0E0D; --brand-soft:#39211E;
+  --high:#F0958B; --mid:#D9B46A; --low:#78C39C;
+  --high-soft:#3A2321; --mid-soft:#332C1E; --low-soft:#1E2F26;
+}
+/* ======================= แบบ ข : แดงสด–ดำ ======================= */
+.tk-b-light{
+  --bg:#FFFFFF; --panel:#FFFFFF; --elev:#F4F4F5; --text:#141416; --dim:#6E6E76;
+  --border:#E4E4E8; --brand:#D92D20; --brand-ink:#B42318; --on-brand:#FFFFFF; --brand-soft:#FDE7E5;
+  --high:#D92D20; --mid:#B25E09; --low:#22794F;
+  --high-soft:#FDE7E5; --mid-soft:#FAF0DE; --low-soft:#DFF1E8;
+}
+.tk-b-dark{
+  --bg:#0E0E10; --panel:#161619; --elev:#1F1F23; --text:#F4F4F6; --dim:#9A9AA4;
+  --border:#2A2A30; --brand:#FF5A4D; --brand-ink:#FF8079; --on-brand:#140908; --brand-soft:#331715;
+  --high:#FF8079; --mid:#E0B268; --low:#6FC79B;
+  --high-soft:#331715; --mid-soft:#302818; --low-soft:#162D22;
+}
+/* ======================= แบบ ค : เทา–ขาว แตะแดงเฉพาะจุด ======================= */
+.tk-c-light{
+  --bg:#F2F2F2; --panel:#FFFFFF; --elev:#E7E7E7; --text:#2B2B2B; --dim:#7A7A7A;
+  --border:#D9D9D9; --brand:#B3241B; --brand-ink:#B3241B; --on-brand:#FFFFFF; --brand-soft:#F6E3E1;
+  --high:#A8443C; --mid:#977524; --low:#4A7A5C;
+  --high-soft:#ECE2E1; --mid-soft:#EDE9DE; --low-soft:#E1E9E4;
+}
+.tk-c-dark{
+  --bg:#181818; --panel:#222222; --elev:#2E2E2E; --text:#EDEDED; --dim:#9B9B9B;
+  --border:#393939; --brand:#E0574C; --brand-ink:#E8837A; --on-brand:#1A1A1A; --brand-soft:#33211F;
+  --high:#DE8A81; --mid:#CFAE63; --low:#7FBE97;
+  --high-soft:#332827; --mid-soft:#322E25; --low-soft:#262F2A;
+}
+/* ======================= แบบ ง : แดง–ดำ คอนทราสต์สูง ======================= */
+.tk-d-light{
+  --bg:#FFFFFF; --panel:#FFFFFF; --elev:#F2F2F2; --text:#000000; --dim:#5E5E5E;
+  --border:#111111; --brand:#C10E1A; --brand-ink:#9E0A14; --on-brand:#FFFFFF; --brand-soft:#FFE1E1;
+  --high:#C10E1A; --mid:#8A5A00; --low:#0F6B42;
+  --high-soft:#FFE1E1; --mid-soft:#FBEFD6; --low-soft:#D9EFE3;
+}
+.tk-d-dark{
+  --bg:#000000; --panel:#0C0C0C; --elev:#161616; --text:#FFFFFF; --dim:#A8A8A8;
+  --border:#2E2E2E; --brand:#FF3B30; --brand-ink:#FF6F66; --on-brand:#000000; --brand-soft:#2B0E0C;
+  --high:#FF6F66; --mid:#E8BA5C; --low:#4ED08C;
+  --high-soft:#2B0E0C; --mid-soft:#2B2413; --low-soft:#0D2B1C;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>โทนสีใหม่ 4 แบบ</h1>
+  <p class="lede">แต่ละแบบแสดงคู่กัน ซ้าย = โหมดสว่าง ขวา = โหมดมืด ระบบสลับตามการตั้งค่าของเครื่องอยู่แล้ว (โค้ดเดิมใช้ <code>prefers-color-scheme</code>) ไม่ต้องแก้อะไรเพิ่ม</p>
+
+  <div class="warnbox">
+    <b>เรื่องที่ต้องคิดก่อนเลือก</b> — ตอนนี้สีแดงในระบบใช้สื่อความหมายว่า "เสี่ยงสูง" อยู่แล้ว
+    ถ้าเอาสีแดงมาเป็นสีหลักของแบรนด์ด้วย ผู้ใช้อาจสับสนว่าปุ่มสีแดงแปลว่าอันตรายหรือเปล่า
+    ผมเลยแยกสองระดับในทุกแบบ คือ <b>แดงแบรนด์</b> ใช้กับโลโก้ ปุ่มหลัก และเมนูที่เลือกอยู่
+    ส่วน <b>แดงเตือนภัย</b> ใช้กับจุดและป้ายระดับความเสี่ยงเท่านั้น สังเกตในตัวอย่างว่าสองแดงนี้คนละเฉดกัน
+  </div>
+
+  <!-- ก -->
+  <div class="opt">
+    <div class="opt-h"><span class="tag">ก</span><b>แดงเลือดหมู – ขาวนวล</b></div>
+    <p class="opt-note">แดงเข้มแบบเลือดหมู พื้นขาวอมอุ่น โหมดมืดเป็นดำอมน้ำตาล ดูสุภาพเป็นทางการ เหมาะกับงานราชการ/มหาวิทยาลัย แดงแบรนด์เข้มพอที่จะไม่ชนกับแดงเตือนภัย</p>
+    <div class="pair">
+      <div><div class="mode-lbl">โหมดสว่าง</div><div class="demo tk-a-light" id="d1"></div></div>
+      <div><div class="mode-lbl">โหมดมืด</div><div class="demo tk-a-dark"></div></div>
+    </div>
+  </div>
+
+  <!-- ข -->
+  <div class="opt">
+    <div class="opt-h"><span class="tag">ข</span><b>แดงสด – ดำ</b></div>
+    <p class="opt-note">แดงสดแบบแอปเตือนภัย พื้นขาวสะอาด โหมดมืดเป็นดำเทาเย็น ดูทันสมัยและกระตุ้นสายตา แต่แดงแบรนด์กับแดงเตือนภัยใกล้กันที่สุดในบรรดา 4 แบบ</p>
+    <div class="pair">
+      <div><div class="mode-lbl">โหมดสว่าง</div><div class="demo tk-b-light"></div></div>
+      <div><div class="mode-lbl">โหมดมืด</div><div class="demo tk-b-dark"></div></div>
+    </div>
+  </div>
+
+  <!-- ค -->
+  <div class="opt">
+    <div class="opt-h"><span class="tag">ค</span><b>เทา – ขาว แตะแดงเฉพาะจุด</b></div>
+    <p class="opt-note">ยึดโทนเทา-ขาวของเดิมไว้ เปลี่ยนแค่โลโก้ ปุ่มหลัก และเมนูที่เลือกอยู่ให้เป็นสีแดง เปลี่ยนน้อยที่สุด เสี่ยงน้อยที่สุด และสีระดับความเสี่ยงยังชัดที่สุด</p>
+    <div class="pair">
+      <div><div class="mode-lbl">โหมดสว่าง</div><div class="demo tk-c-light"></div></div>
+      <div><div class="mode-lbl">โหมดมืด</div><div class="demo tk-c-dark"></div></div>
+    </div>
+  </div>
+
+  <!-- ง -->
+  <div class="opt">
+    <div class="opt-h"><span class="tag">ง</span><b>แดง – ดำ คอนทราสต์สูง</b></div>
+    <p class="opt-note">ขาวล้วน/ดำสนิท ตัวอักษรดำจัด เส้นขอบเข้ม แดงจัดจ้าน อ่านง่ายที่สุดในที่แสงจ้าและกลางคืน เหมาะกับการใช้งานกลางแจ้ง แต่ดูแข็งกว่าแบบอื่น</p>
+    <div class="pair">
+      <div><div class="mode-lbl">โหมดสว่าง</div><div class="demo tk-d-light"></div></div>
+      <div><div class="mode-lbl">โหมดมืด</div><div class="demo tk-d-dark"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var DEMO =
+  '<div class="d-top">' +
+    '<span class="wm">RED ZONE<span>มจพ.</span></span>' +
+    '<span class="d-sp"></span>' +
+    '<span class="ava">u</span>' +
+  '</div>' +
+  '<div class="d-body">' +
+    '<button class="cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>แจ้งเหตุการณ์</button>' +
+    '<div class="navrow">' +
+      '<span class="nav-i on">แผนที่พื้นที่เสี่ยง</span>' +
+      '<span class="nav-i">รายงานของฉัน</span>' +
+      '<span class="nav-i">โปรไฟล์</span>' +
+    '</div>' +
+    '<div class="chips">' +
+      '<span class="chip on">ทั้งหมด</span>' +
+      '<span class="chip"><i class="dot" style="background:var(--high)"></i>เสี่ยงสูง</span>' +
+      '<span class="chip"><i class="dot" style="background:var(--mid)"></i>เฝ้าระวัง</span>' +
+      '<span class="chip"><i class="dot" style="background:var(--low)"></i>ทั่วไป</span>' +
+    '</div>' +
+    '<div class="item">' +
+      '<span class="sev" style="background:var(--high)"></span>' +
+      '<span>' +
+        '<span class="i-cat">ไฟส่องสว่างชำรุด</span>' +
+        '<span class="i-desc">ไฟดับ 3 เสาติดกัน ทางเดินมืดมากช่วงกลางคืน</span>' +
+        '<span class="i-meta">ทางเดินริมคลองบางซื่อ · 17 ก.ย. 2569 19:02</span>' +
+      '</span>' +
+    '</div>' +
+    '<div class="pills">' +
+      '<span class="pill high">เสี่ยงสูง</span>' +
+      '<span class="pill mid">เฝ้าระวัง</span>' +
+      '<span class="pill low">ทั่วไป</span>' +
+    '</div>' +
+    '<div class="legend">' +
+      '<div><i style="background:var(--high)"></i>เสี่ยงสูง — ต้องแก้ไขทันที</div>' +
+      '<div><i style="background:var(--mid)"></i>เฝ้าระวัง</div>' +
+      '<div><i style="background:var(--low)"></i>ทั่วไป</div>' +
+    '</div>' +
+    '<div class="swatches">' +
+      '<div style="background:var(--brand)"></div>' +
+      '<div style="background:var(--bg)"></div>' +
+      '<div style="background:var(--panel)"></div>' +
+      '<div style="background:var(--elev)"></div>' +
+      '<div style="background:var(--high)"></div>' +
+      '<div style="background:var(--mid)"></div>' +
+      '<div style="background:var(--low)"></div>' +
+    '</div>' +
+  '</div>';
+
+document.querySelectorAll('.demo').forEach(function (el) { el.innerHTML = DEMO; });
+</script>
+</body>
+</html>

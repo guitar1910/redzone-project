@@ -1,0 +1,15 @@
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS admin_audit_logs;
+DROP TABLE IF EXISTS login_attempts;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS report_confirmations;
+DROP TABLE IF EXISTS report_status_logs;
+DROP TABLE IF EXISTS report_attachments;
+DROP TABLE IF EXISTS reports;
+DROP TABLE IF EXISTS zones;
+DROP TABLE IF EXISTS locations;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS user_settings;
+DROP TABLE IF EXISTS users;
+SET FOREIGN_KEY_CHECKS = 1;

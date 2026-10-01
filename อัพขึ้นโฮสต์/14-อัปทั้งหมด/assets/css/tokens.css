@@ -1,0 +1,104 @@
+html {
+  color-scheme: light dark
+}
+img {
+  max-width: 100%
+}
+[hidden] {
+  display: none!important
+}
+:root {
+  --bg: #F7F4F3;
+  --panel: #FFFFFF;
+  --elev: #F0EAE9;
+  --text: #241B1A;
+  --dim: #7A6D6B;
+  --border: #E4DAD8;
+  --border-strong: #C9BAB8;
+  --accent: #8E1B16;
+  --accent-2: #A8231D;
+  --on-accent: #FFFFFF;
+  --accent-soft: #F5E4E2;
+  --art-light: #E2D8D6;
+  --art-dark: #7A6D6B;
+  --art-ink: #7A6D6B;
+  --high: #C0281F;
+  --mid: #8A6410;
+  --low: #2E6B4C;
+  --fixed: #1E5A96;
+  --fixed-soft: #E2ECF6;
+  --high-soft: #F8E3E1;
+  --mid-soft: #F4EDDC;
+  --low-soft: #E0EDE6;
+  --map-land: #DDD5D4;
+  --map-block: #C7BEBC;
+  --map-road: #F7F4F3;
+  --map-water: #C2C6C5;
+  --shadow: 0 1px 2px rgba(60,30,28,.07),0 8px 24px -12px rgba(60,30,28,.22);
+  --r-s: 6px;
+  --r-m: 10px;
+  --r-l: 16px;
+  --f-display: "Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+  --f-body: "IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono: "IBM Plex Mono",ui-monospace,Menlo,monospace
+}
+@media (prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #181818;
+    --panel: #222222;
+    --elev: #2E2E2E;
+    --text: #EDEDED;
+    --dim: #9B9B9B;
+    --border: #393939;
+    --border-strong: #4E4E4E;
+    --accent: #E0574C;
+    --accent-2: #EA6B60;
+    --on-accent: #1A1010;
+    --accent-soft: #33211F;
+    --art-light: #2C2C2C;
+    --art-dark: #4E4E4E;
+    --art-ink: #B0B0B0;
+    --high: #DE8A81;
+    --mid: #CFAE63;
+    --low: #7FBE97;
+    --fixed: #7CB2E8;
+    --fixed-soft: #1E2A36;
+    --high-soft: #332827;
+    --mid-soft: #322E25;
+    --low-soft: #262F2A;
+    --map-land: #242424;
+    --map-block: #303030;
+    --map-road: #3D3D3D;
+    --map-water: #2A2F2F;
+    --shadow: 0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7)
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #181818;
+  --panel: #222222;
+  --elev: #2E2E2E;
+  --text: #EDEDED;
+  --dim: #9B9B9B;
+  --border: #393939;
+  --border-strong: #4E4E4E;
+  --accent: #E0574C;
+  --accent-2: #EA6B60;
+  --on-accent: #1A1010;
+  --accent-soft: #33211F;
+  --art-light: #2C2C2C;
+  --art-dark: #4E4E4E;
+  --art-ink: #B0B0B0;
+  --high: #DE8A81;
+  --mid: #CFAE63;
+  --low: #7FBE97;
+  --fixed: #7CB2E8;
+  --fixed-soft: #1E2A36;
+  --high-soft: #332827;
+  --mid-soft: #322E25;
+  --low-soft: #262F2A;
+  --map-land: #242424;
+  --map-block: #303030;
+  --map-road: #3D3D3D;
+  --map-water: #2A2F2F;
+  --shadow: 0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7)
+}

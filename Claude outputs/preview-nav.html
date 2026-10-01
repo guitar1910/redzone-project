@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>การเดินไปมาระหว่างโพสต์</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --f-display:"Bai Jamjuree","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --bg:#181818;--panel:#222222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;--border:#393939;
+  --border-strong:#4E4E4E;--accent:#E0574C;--on-accent:#1A1010;--accent-soft:#33211F;
+  --high:#DE8A81;--mid:#CFAE63;--low:#7FBE97;
+  --high-soft:#332827;--mid-soft:#322E25;--low-soft:#262F2A;
+  --r-s:6px;--r-m:10px;--r-l:16px;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:var(--f-body)}
+body{background:#0E0E10;color:var(--text);padding:28px 18px 80px;line-height:1.55}
+.page{max-width:1300px;margin:0 auto}
+h1{font-family:var(--f-display);font-size:23px;font-weight:700;margin-bottom:6px}
+.lede{color:var(--dim);font-size:13px;margin-bottom:22px;max-width:80ch}
+h2.sec{font-family:var(--f-display);font-size:18px;font-weight:700;margin:32px 0 4px;
+       padding-top:20px;border-top:1px solid #2A2A30}
+p.secnote{color:var(--dim);font-size:13px;margin-bottom:18px;max-width:84ch}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;align-items:start}
+.tag{display:inline-block;font-family:var(--f-display);font-weight:700;font-size:12.5px;background:#232326;
+     border:1px solid #35353A;border-radius:999px;padding:2px 12px;margin-right:8px}
+.ttl{font-size:14.5px;font-weight:600}
+.note{color:#8F8F95;font-size:12px;margin:7px 0 11px;min-height:62px}
+
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-l);overflow:hidden;position:relative}
+.scr{max-height:520px;overflow-y:auto}
+.scr::-webkit-scrollbar{width:7px}
+.scr::-webkit-scrollbar-thumb{background:#3A3A3A;border-radius:99px}
+
+/* หัวแบบต่าง ๆ */
+.nav1{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--elev);
+      border-bottom:1px solid var(--border);font-size:12.5px;position:sticky;top:0;z-index:5}
+.nav1 .b{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--text)}
+.nav1 .sp{flex:1}
+.pager{display:inline-flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--border);
+       border-radius:999px;padding:2px}
+.pager button{width:24px;height:22px;border-radius:999px;color:var(--dim);font-size:13px}
+.pager button:hover{background:var(--elev);color:var(--text)}
+.pager span{font-family:var(--f-mono);font-size:11px;color:var(--dim);padding:0 5px}
+
+.strip{display:flex;gap:7px;padding:9px 11px;background:var(--elev);border-bottom:1px solid var(--border);
+       overflow-x:auto;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.scard{flex:none;width:112px;background:var(--panel);border:1px solid var(--border);border-radius:var(--r-s);
+       padding:7px 8px;font-size:10.5px;line-height:1.35;color:var(--dim);position:relative}
+.scard.on{border-color:var(--accent);background:var(--accent-soft)}
+.scard b{display:block;color:var(--text);font-size:11px;font-weight:600;margin-bottom:2px;
+         white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard i{position:absolute;right:6px;top:6px;width:7px;height:7px;border-radius:999px}
+
+.drawer{position:absolute;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--border);
+        box-shadow:0 -8px 24px -14px #000;z-index:6}
+.drawer-h{display:flex;align-items:center;gap:8px;padding:11px 14px;font-size:12.5px;font-weight:600}
+.drawer-h .n{margin-left:auto;color:var(--dim);font-weight:400;font-family:var(--f-mono);font-size:11px}
+.drawer-list{max-height:132px;overflow:hidden;border-top:1px solid var(--border)}
+
+.rowi{display:grid;grid-template-columns:auto 1fr auto;gap:10px;padding:9px 14px;width:100%;
+      text-align:left;border-bottom:1px solid var(--border);align-items:center}
+.rowi:hover{background:var(--elev)}
+.rowi.on{background:var(--accent-soft)}
+.sev{width:9px;height:9px;border-radius:999px;flex:none}
+.rowi .t{min-width:0}
+.rowi .t b{display:block;font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rowi .t span{display:block;color:var(--dim);font-size:10.5px;font-family:var(--f-mono);margin-top:1px}
+.rowi .r{color:var(--dim);font-size:10px;font-family:var(--f-mono);white-space:nowrap}
+
+/* เนื้อโพสต์ */
+.t-head{padding:13px 14px;border-bottom:1px solid var(--border)}
+.t-top{display:flex;gap:9px;align-items:flex-start}
+.t-top h3{font-family:var(--f-display);font-size:16px;font-weight:600;flex:1;line-height:1.35}
+.sevpill{font-size:10.5px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.sevpill.mid{background:var(--mid-soft);color:var(--mid)}
+.t-sub{color:var(--dim);font-size:11px;margin-top:5px;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.stpill{font-size:10px;font-weight:600;padding:2px 9px;border-radius:999px}
+.stpill.wait{background:var(--mid-soft);color:var(--mid)}
+.stpill.done{background:var(--low-soft);color:var(--low)}
+.tl{padding:13px 14px 4px}
+.tl-item{display:grid;grid-template-columns:auto 1fr;gap:12px;padding-bottom:15px;position:relative}
+.tl-item::before{content:"";position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--border)}
+.tl-item:last-child::before{display:none}
+.tl-dot{width:18px;height:18px;border-radius:999px;border:2px solid var(--panel);z-index:1}
+.tl-t{font-size:12.5px;font-weight:600}
+.tl-d{color:var(--dim);font-size:10.5px;font-family:var(--f-mono);margin-bottom:6px}
+.tl-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-m);padding:10px 12px;
+        font-size:13.5px;line-height:1.55;font-weight:500}
+.tl-ph{aspect-ratio:16/10;border-radius:var(--r-m);border:1px solid var(--border);display:grid;place-items:center;
+       font-size:11px;color:#6E6E6E;margin-top:8px;background:linear-gradient(145deg,#2c2422,#1b1918)}
+.acts{display:flex;gap:8px;padding:2px 14px 13px}
+.btn{padding:9px 13px;border-radius:var(--r-m);font-size:12.5px;font-weight:600;border:1px solid var(--border);color:var(--text)}
+.btn.pri{background:var(--accent);color:var(--on-accent);border-color:var(--accent);flex:1;text-align:center}
+.more{width:100%;text-align:left;padding:10px 14px;border-top:1px solid var(--border);font-size:12px;color:var(--dim)}
+.pad{height:150px}
+
+.warn{border-left:2px solid var(--accent);padding:11px 14px;margin-top:18px;color:#B9B2B1;font-size:12.5px;max-width:88ch}
+.warn b{color:var(--text);font-weight:600}
+.bug{background:#2A1D1C;border:1px solid #4A2F2C;border-radius:var(--r-m);padding:13px 15px;
+     font-size:12.5px;color:#C9B8B6;max-width:92ch;margin-bottom:8px}
+.bug b{color:var(--text)}
+.bug code{font-family:var(--f-mono);font-size:11.5px;background:#1C1414;padding:1px 6px;border-radius:4px}
+table.cmp{border-collapse:collapse;font-size:12.5px;margin-top:10px;width:100%;max-width:640px}
+table.cmp th,table.cmp td{border:1px solid var(--border);padding:7px 11px;text-align:left}
+table.cmp th{background:var(--elev);font-weight:600;font-size:11.5px;color:var(--dim)}
+table.cmp code{font-family:var(--f-mono);font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>จะเดินไปดูโพสต์อื่นยังไง</h1>
+<p class="lede">3 วิธี ทุกแบบใช้เนื้อโพสต์แบบไทม์ไลน์เหมือนกัน และตัดแถบความคืบหน้า 4 ขั้นออกตามที่คุณบอก เหลือเป็นป้ายสถานะอันเดียว</p>
+
+<div class="row">
+  <div>
+    <div><span class="tag">1</span><span class="ttl">ลูกศรเลื่อนเรื่องที่หัวแผง</span></div>
+    <p class="note">แถบหัวเดียวทำสามอย่าง — ปุ่มย้อนกลับไปรายการจุด ชื่อจุดที่อยู่ และลูกศร ‹ 3/12 › ไว้พลิกดูเรื่องถัดไปที่จุดเดียวกัน ไม่ต้องย้อนกลับไปรายการทุกครั้ง แถบนี้ติดหนึบอยู่บนสุดตลอดแม้เลื่อนลง</p>
+    <div class="panel"><div class="scr" id="n1"></div></div>
+  </div>
+
+  <div>
+    <div><span class="tag">2</span><span class="ttl">รายการย่อค้างอยู่ขอบล่าง</span></div>
+    <p class="note">มีแถบบางค้างอยู่ก้นแผงตลอดเวลา เขียนว่า "เหตุการณ์อื่นที่จุดนี้ 11 เรื่อง" กดแล้วเลื่อนขึ้นมาเป็นรายการ เลือกเรื่องใหม่ได้ทันที · เห็นตลอดว่ายังมีเรื่องอื่นรออยู่ ไม่ต้องจำว่าต้องกดย้อนกลับ</p>
+    <div class="panel"><div class="scr" id="n2"></div><div class="drawer" id="n2d"></div></div>
+  </div>
+
+  <div>
+    <div><span class="tag">3</span><span class="ttl">แถบการ์ดย่อเลื่อนแนวนอนด้านบน</span></div>
+    <p class="note">ใต้หัวแผงมีแถวการ์ดเล็ก ๆ ของทุกเรื่องที่จุดนี้ เลื่อนซ้ายขวาได้ อันที่กำลังดูอยู่ขอบแดง กดอันไหนก็สลับไปอันนั้น · เห็นภาพรวมว่ามีอะไรบ้างโดยไม่ต้องออกจากหน้า แต่กินที่แนวตั้งไปหนึ่งแถว</p>
+    <div class="panel"><div class="scr" id="n3"></div></div>
+  </div>
+</div>
+
+<div class="warn">
+  <b>ความเห็นผม</b> — เอา <b>1 เป็นหลัก</b> เพราะกินที่น้อยสุดและทำงานได้ทั้งบนคอมและมือถือ
+  ถ้าจอกว้างพอค่อยเสริม <b>2</b> เข้าไป จะได้เห็นเรื่องอื่นตลอดเวลาด้วย
+  ส่วน <b>3</b> สวยแต่กินที่แนวตั้งไปหนึ่งแถว ซึ่งบนมือถือมีค่ามาก
+</div>
+
+<h2 class="sec">เรื่องแถบความคืบหน้า — คุณพูดถูก แต่สาเหตุน่ากลัวกว่าที่คิด</h2>
+<p class="secnote">ผมไปเปิดโค้ดดูตาม แล้วเจอว่าไม่ใช่แค่ "ไม่จำเป็น" แต่ตอนนี้มันบอกข้อมูลผิดอยู่</p>
+
+<div class="bug">
+  ใน <code>api/admin.php</code> คำสั่งอนุมัติเขียนไว้แบบนี้ <code>change_status($adminId, $id, 'done', ... , 1)</code>
+  แปลว่า<b>พอแอดมินกดอนุมัติ ระบบจะตั้งสถานะเป็น "เสร็จสมบูรณ์" ทันที</b>
+  ทั้งที่การอนุมัติหมายถึงแค่ "ตรวจแล้วว่าเป็นเรื่องจริง" ไม่ได้แปลว่าไฟถูกซ่อมแล้ว
+  <br><br>
+  และใน <code>database/schema.sql</code> รายงานที่เพิ่งส่งเข้ามาตั้งค่าเริ่มต้นเป็น <code>'prog'</code>
+  ซึ่งแปลว่า "กำลังดำเนินการ" ทั้งที่ยังไม่มีใครแตะเลย
+  <br><br>
+  <b>ผลคือทุกโพสต์บนแผนที่สาธารณะตอนนี้ขึ้นว่า "เสร็จสมบูรณ์" หมด</b>
+  แถบ 4 ขั้นเลยเต็มตลอด ไม่เคยเปลี่ยน — คุณถึงรู้สึกว่ามันไม่มีประโยชน์
+  และที่สำคัญกว่านั้นคือ <b>ถ้าไม่แก้ตรงนี้ ระบบ "แก้ไขแล้ว" ที่จะทำจะสร้างไม่ได้เลย</b>
+  เพราะทุกเรื่องมันเสร็จไปตั้งแต่วินาทีที่อนุมัติแล้ว
+
+  <table class="cmp">
+    <tr><th>จังหวะ</th><th>ตอนนี้</th><th>ที่ควรเป็น</th></tr>
+    <tr><td>ผู้ใช้เพิ่งส่งเรื่อง</td><td><code>prog</code> กำลังดำเนินการ</td><td><code>sent</code> รอตรวจสอบ</td></tr>
+    <tr><td>แอดมินกดอนุมัติ</td><td><code>done</code> เสร็จสมบูรณ์</td><td><code>ack</code> รับเรื่องแล้ว · ขึ้นแผนที่</td></tr>
+    <tr><td>ส่งต่อหน่วยงาน</td><td>ไม่มีจังหวะนี้</td><td><code>prog</code> กำลังดำเนินการ</td></tr>
+    <tr><td>กรอกผลการแก้ไข</td><td>ไม่มีจังหวะนี้</td><td><code>done</code> แก้ไขแล้ว · เริ่มนับ 7 วัน</td></tr>
+  </table>
+</div>
+
+<h2 class="sec">แล้วบนแผนที่ควรโชว์สถานะแค่ไหน</h2>
+<p class="secnote">ตามที่คุณบอก ตัดแถบ 4 ขั้นออกจากแผนที่ เหลือป้ายเดียวพอ — แต่ยังต้องมี เพราะมันคือหัวใจของระบบแก้ไขแล้ว</p>
+
+<div class="row" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+  <div>
+    <div style="margin-bottom:9px"><span class="tag">ก</span><span class="ttl">ยังไม่ได้แก้</span></div>
+    <div class="panel"><div id="s1"></div></div>
+  </div>
+  <div>
+    <div style="margin-bottom:9px"><span class="tag">ข</span><span class="ttl">แก้ไขแล้ว</span></div>
+    <div class="panel"><div id="s2"></div></div>
+  </div>
+</div>
+
+<div class="warn">
+  บนแผนที่เหลือแค่ 2 ป้าย — <b>ยังไม่ได้แก้ไข</b> กับ <b>แก้ไขแล้ว</b> จบ
+  ส่วนแถบ 4 ขั้นเต็ม ๆ ยังเก็บไว้ในหน้า <b>รายงานของฉัน</b> เหมือนเดิม
+  เพราะที่นั่นผู้แจ้งอยากรู้จริง ๆ ว่าเรื่องตัวเองถึงไหนแล้ว ตั้งแต่ส่งจนอนุมัติจนซ่อมเสร็จ
+</div>
+
+</div>
+
+<script>
+var ITEMS = [
+  ['ไฟดับ 3 เสาติดกัน ทางเดินมืดมาก','ไฟส่องสว่างชำรุด','mid','วันนี้'],
+  ['พื้นแตกร้าวต่างระดับ 4 ซม.','ทางเดิน/พื้นชำรุด','high','วันนี้'],
+  ['มีคนเดินตามช่วงกลับหอ','การคุกคาม/ตามรบกวน','high','เมื่อวาน'],
+  ['กระจกรถถูกทุบ ของหาย','ลักทรัพย์','mid','เมื่อวาน'],
+  ['ฝาท่อหาย เป็นหลุมลึก','ทางเดิน/พื้นชำรุด','high','2 วัน'],
+  ['สุนัขจรจัดรวมฝูง 5 ตัว','สัตว์จรจัด','low','3 วัน'],
+  ['ไฟกะพริบติด ๆ ดับ ๆ','ไฟส่องสว่างชำรุด','mid','3 วัน'],
+  ['พื้นลื่นมากตอนฝนตก','ทางเดิน/พื้นชำรุด','mid','4 วัน'],
+  ['ไฟทางดับตลอดแนว','ไฟส่องสว่างชำรุด','mid','5 วัน'],
+  ['รถชนตรงทางโค้ง','อุบัติเหตุจราจร','high','6 วัน'],
+  ['มีคนแปลกหน้าเฝ้าลานจอด','การคุกคาม/ตามรบกวน','mid','1 สัปดาห์'],
+  ['ไฟเสาที่ 4 ดับ','ไฟส่องสว่างชำรุด','low','1 สัปดาห์']
+];
+
+function head(status){
+  var st = status==='done'
+    ? '<span class="stpill done">✓ แก้ไขแล้ว</span>'
+    : '<span class="stpill wait">ยังไม่ได้แก้ไข</span>';
+  return '<div class="t-head"><div class="t-top">' +
+    '<h3>ไฟส่องสว่างชำรุด</h3><span class="sevpill mid">เฝ้าระวัง</span></div>' +
+    '<div class="t-sub">'+st+'<span>ทางเดินริมคลองบางซื่อ</span><span>·</span><span>ยืนยัน 12 คน</span></div></div>';
+}
+
+function tl(done){
+  var h = '<div class="tl">' +
+    item('var(--accent)','ผู้แจ้งส่งเรื่อง','ping · วันนี้ 16:36',
+      '<div class="tl-box">ไฟดับ 3 เสาติดกัน ทางเดินมืดมากช่วง 19:00 ถึง 06:00 มีนักศึกษาใช้ทางนี้กลับหอเยอะ</div>' +
+      '<div class="tl-ph">รูปจากผู้แจ้ง · 2 รูป</div>');
+  if (done) {
+    h += item('var(--low)','แก้ไขแล้ว','งานอาคารสถานที่ · 15 ก.ย. 2569',
+      '<div class="tl-box">เปลี่ยนหลอด LED 3 ดวง และเดินสายไฟใหม่ช่วงทางเดิน 20 เมตร</div>' +
+      '<div class="tl-ph" style="background:linear-gradient(145deg,#232b26,#1a1d1b)">รูปหลังแก้ไข</div>');
+  } else {
+    h += item('var(--accent)','ผู้ดูแลรับเรื่องแล้ว','admin001 · วันนี้ 17:02','');
+  }
+  return h + '</div>';
+}
+function item(color,title,date,body){
+  return '<div class="tl-item"><span class="tl-dot" style="background:'+color+'"></span>' +
+    '<div><div class="tl-t">'+title+'</div><div class="tl-d">'+date+'</div>'+body+'</div></div>';
+}
+var ACTS = '<div class="acts"><span class="btn pri">ฉันพบเหตุนี้ด้วย</span><span class="btn">แจ้งเหตุที่จุดนี้</span></div>' +
+  '<button class="more">⌄ ดูข้อมูลทางเทคนิค (เลขรายงาน พิกัด ระยะห่าง)</button>';
+
+/* นำทาง 1 */
+document.getElementById('n1').innerHTML =
+  '<div class="nav1"><span class="b">‹ ทางเดินริมคลองบางซื่อ</span><span class="sp"></span>' +
+  '<span class="pager"><button>‹</button><span>1/12</span><button>›</button></span></div>' +
+  head('wait') + tl(false) + ACTS;
+
+/* นำทาง 2 */
+document.getElementById('n2').innerHTML =
+  '<div class="nav1"><span class="b">‹ ทางเดินริมคลองบางซื่อ</span><span class="sp"></span>' +
+  '<span style="color:var(--dim);font-family:var(--f-mono);font-size:11px">12 เรื่อง</span></div>' +
+  head('wait') + tl(false) + ACTS + '<div class="pad"></div>';
+document.getElementById('n2d').innerHTML =
+  '<div class="drawer-h"><span>⌃</span><span>เหตุการณ์อื่นที่จุดนี้</span><span class="n">11 เรื่อง</span></div>' +
+  '<div class="drawer-list">' + ITEMS.slice(1,4).map(rowi).join('') + '</div>';
+
+/* นำทาง 3 */
+document.getElementById('n3').innerHTML =
+  '<div class="nav1"><span class="b">‹ ทางเดินริมคลองบางซื่อ</span><span class="sp"></span>' +
+  '<span style="color:var(--dim);font-family:var(--f-mono);font-size:11px">12 เรื่อง</span></div>' +
+  '<div class="strip">' + ITEMS.map(function(it,i){
+    return '<div class="scard'+(i===0?' on':'')+'"><i style="background:var(--'+it[2]+')"></i>' +
+      '<b>'+it[1]+'</b>'+it[3]+'</div>';
+  }).join('') + '</div>' +
+  head('wait') + tl(false) + ACTS;
+
+function rowi(it){
+  return '<button class="rowi"><span class="sev" style="background:var(--'+it[2]+')"></span>' +
+    '<span class="t"><b>'+it[0]+'</b><span>'+it[1]+'</span></span><span class="r">'+it[3]+'</span></button>';
+}
+
+document.getElementById('s1').innerHTML = head('wait') + tl(false);
+document.getElementById('s2').innerHTML = head('done') + tl(true) +
+  '<div style="margin:0 14px 14px;padding:10px 13px;border:1px dashed var(--border-strong);border-radius:var(--r-m);' +
+  'color:var(--dim);font-size:11.5px">⏳ จะหายจากแผนที่ในอีก <b style="color:var(--text)">5 วัน</b></div>';
+</script>
+</body>
+</html>

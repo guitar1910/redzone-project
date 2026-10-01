@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RedZone — ออกแบบหน้าโปรไฟล์ใหม่</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Bai+Jamjuree:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#181818;--panel:#222222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;
+  --border:#393939;--border-strong:#4E4E4E;--accent:#EDEDED;--accent-2:#FFFFFF;
+  --on-accent:#1A1A1A;--accent-soft:#333333;--r-l:14px;--r-m:10px;
+  --high:#DE8A81;--mid:#CFAE63;--low:#7FBE97;
+  --high-soft:#332827;--mid-soft:#322E25;--low-soft:#262F2A;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-display:"Bai Jamjuree",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0E0E0E;color:var(--text);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.page{max-width:1500px;margin:0 auto;padding:30px 20px 90px}
+h1.t{font-family:var(--f-display);font-size:23px;margin:0 0 6px}
+.sub0{color:var(--dim);font-size:14px;margin:0 0 14px}
+.cut{background:#2A2320;border:1px solid #4A3B33;border-radius:10px;padding:12px 14px;font-size:13.5px;color:#E8D9CF;margin:0 0 28px}
+.cut b{color:#fff}
+.cut ul{margin:6px 0 0;padding-left:18px}
+.cut li{margin:2px 0}
+
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:26px;align-items:start}
+.col>.hd{display:flex;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap}
+.tag{background:var(--accent);color:var(--on-accent);font-weight:600;font-size:12px;padding:3px 10px;border-radius:999px}
+.col>.hd b.h{font-size:15px;font-weight:600}
+.why{color:var(--dim);font-size:12.5px;margin:0 0 14px;min-height:56px}
+
+/* app pieces */
+.stack{display:grid;gap:14px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-l);padding:16px}
+.card h3{font-size:14px;font-weight:600;margin:0 0 10px}
+.prof{display:flex;gap:16px;align-items:center}
+.prof .big{width:60px;height:60px;border-radius:999px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:22px;flex:none}
+.prof h2{font-size:18px;font-weight:600;margin:0}
+.prof .sub{color:var(--dim);font-size:12.5px;margin-top:2px}
+.mono{font-family:var(--f-mono)}
+.rolebadge{display:inline-flex;align-items:center;gap:6px;margin-top:5px;font-size:11.5px;font-weight:600;color:var(--dim);background:var(--elev);border:1px solid var(--border);border-radius:999px;padding:3px 10px}
+.statline{display:flex;gap:22px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap}
+.statline div{font-size:11.5px;color:var(--dim)}
+.statline b{display:block;font-family:var(--f-mono);font-size:19px;font-weight:500;color:var(--text)}
+.btn{padding:9px 14px;border-radius:10px;border:1px solid var(--border-strong);background:var(--elev);color:var(--text);font:inherit;font-size:13px;cursor:pointer}
+.btn.pri{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.wide{width:100%}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+.pill.high{background:var(--high-soft);color:var(--high)}
+.pill.mid{background:var(--mid-soft);color:var(--mid)}
+.pill.low{background:var(--low-soft);color:var(--low)}
+.pill.st{background:var(--elev);color:var(--dim);font-weight:500}
+
+/* my reports mini list */
+.mini{display:grid;gap:0;margin:0 -16px -16px;border-top:1px solid var(--border)}
+.mini a{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:11px 16px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit}
+.mini a:last-child{border-bottom:none}
+.mini .dot{width:9px;height:9px;border-radius:999px}
+.mini .tx b{display:block;font-size:13px;font-weight:600;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.mini .tx span{font-size:11.5px;color:var(--dim)}
+.cardfoot{margin:14px -16px -16px;padding:11px 16px;border-top:1px solid var(--border);text-align:center}
+.linky{color:var(--accent);font-size:12.5px;font-weight:600;background:none;border:none;cursor:pointer}
+
+/* breakdown bar (B) */
+.bar{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--elev);margin:4px 0 12px}
+.bar i{display:block}
+.legend{display:grid;gap:7px}
+.legend div{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--dim)}
+.legend i{width:9px;height:9px;border-radius:999px;flex:none}
+.legend b{margin-left:auto;font-family:var(--f-mono);color:var(--text);font-weight:500}
+
+/* settings (C) */
+.switch{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.switch:last-of-type{border-bottom:none}
+.switch .lbl{display:grid;gap:2px;flex:1}
+.switch .lbl>span:first-child{font-size:13.5px}
+.switch .lbl>span+span{font-size:11.5px;color:var(--dim)}
+.tg{width:44px;height:26px;border-radius:999px;background:var(--border-strong);border:none;position:relative;cursor:pointer;flex:none;transition:background .15s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:#fff;transition:transform .15s}
+.tg[aria-pressed="true"]{background:var(--accent)}
+.tg[aria-pressed="true"]::after{transform:translateX(18px)}
+.note{background:var(--elev);border:1px solid var(--border);border-radius:var(--r-m);padding:11px 13px;font-size:12.5px;color:var(--dim);line-height:1.6;margin-top:12px}
+.kvrow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.kvrow:last-child{border-bottom:none}
+.kvrow span:first-child{color:var(--dim)}
+.danger{color:var(--high);border-color:#5C3A34}
+.newtag{display:inline-block;font-size:10.5px;font-weight:600;color:var(--low);background:var(--low-soft);border-radius:999px;padding:2px 7px;margin-left:6px}
+.foot{color:var(--dim);font-size:12px;margin:26px 0 0;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1 class="t">หน้าโปรไฟล์ — ออกแบบใหม่ 6 แบบ</h1>
+<p class="sub0">ยังไม่ได้แก้ไฟล์จริง · เลือกมาว่าเอาแบบไหน</p>
+
+<div class="cut"><b>ตัดออกทั้ง 3 แบบ</b> เพราะกดแล้วไม่เกิดอะไรขึ้นจริง
+  <ul>
+    <li>เตือนเมื่อเข้าใกล้พื้นที่เสี่ยงสูง — ต้องตามตำแหน่งตลอดเวลาแม้ปิดเว็บ เว็บธรรมดาทำไม่ได้</li>
+    <li>สรุปเหตุการณ์รายสัปดาห์ทางอีเมล — InfinityFree ปิดการส่งเมลไว้</li>
+    <li>แชร์ตำแหน่งขณะใช้งาน — โค้ดไม่ได้อ่านค่านี้เลย</li>
+    <li>สถานะรายงานของฉันเปลี่ยน — ระบบแจ้งให้อยู่แล้วเสมอ ปิดไม่ได้อยู่ดี</li>
+  </ul>
+</div>
+
+<div class="row">
+
+<!-- ============ A ============ -->
+<div class="col">
+  <div class="hd"><span class="tag">แบบ A</span><b class="h">เรียบ — เหลือเฉพาะของจริง</b></div>
+  <p class="why">ตัดการ์ดสวิตช์ออกทั้งหมด แทนที่ด้วยรายงานล่าสุดของตัวเอง กดแล้วเด้งไปหน้ารายงาน · สั้น ไม่มีอะไรหลอกตา</p>
+  <div class="stack">
+
+    <div class="card">
+      <div class="prof">
+        <div class="big">p</div>
+        <div>
+          <h2>ssping</h2>
+          <span class="rolebadge">ผู้ใช้ทั่วไป</span>
+          <div class="sub mono">123456790 · s123456790@email.kmutnb.ac.th</div>
+        </div>
+      </div>
+      <div class="statline">
+        <div><b>5</b><span>รายงานที่ส่ง</span></div>
+        <div><b>3</b><span>เสร็จสมบูรณ์</span></div>
+        <div><b>5</b><span>คนกดยืนยัน</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>รายงานล่าสุดของฉัน</h3>
+      <div class="mini">
+        <a href="#"><i class="dot" style="background:var(--high)"></i>
+          <span class="tx"><b>มีคนเดินตามหลังตั้งแต่ประตูวงศ์สว่าง</b><span>ทางเดินริมคลองบางซื่อ · 8 ก.ย. 16:06</span></span>
+          <span class="pill st">กำลังดำเนินการ</span></a>
+        <a href="#"><i class="dot" style="background:var(--mid)"></i>
+          <span class="tx"><b>น้ำขังสูง 10 ซม. ตลอดทางเดิน</b><span>ทางเดินริมคลองบางซื่อ · 8 ก.ย. 16:05</span></span>
+          <span class="pill st">รอตรวจสอบ</span></a>
+        <a href="#"><i class="dot" style="background:var(--low)"></i>
+          <span class="tx"><b>ไฟทางเดินดับ 3 เสาติดกัน</b><span>ทางเดินริมคลองบางซื่อ · 8 ก.ย. 13:09</span></span>
+          <span class="pill low">เสร็จสมบูรณ์</span></a>
+      </div>
+      <div class="cardfoot"><button class="linky">ดูรายงานทั้งหมด 5 รายการ →</button></div>
+    </div>
+
+    <div class="card">
+      <h3>บัญชี</h3>
+      <div class="kvrow"><span>สมัครเมื่อ</span><span class="mono">8 ก.ย. 2569</span></div>
+      <div class="kvrow"><span>สถานะบัญชี</span><span class="pill low">ใช้งานได้</span></div>
+      <div style="margin-top:14px"><button class="btn wide">ออกจากระบบ</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ B ============ -->
+<div class="col">
+  <div class="hd"><span class="tag">แบบ B</span><b class="h">เห็นภาพรวม — มีแถบสรุปสถานะ</b></div>
+  <p class="why">เหมือน A แต่เพิ่มแถบสีแยกว่ารายงานของเราอยู่ขั้นไหนบ้าง · ดูมีอะไรตอนพรีเซนต์ และตอบคำถาม "เรื่องที่แจ้งไปถึงไหนแล้ว" ได้ในตาเดียว</p>
+  <div class="stack">
+
+    <div class="card">
+      <div class="prof">
+        <div class="big">p</div>
+        <div>
+          <h2>ssping</h2>
+          <span class="rolebadge">ผู้ใช้ทั่วไป</span>
+          <div class="sub mono">123456790 · s123456790@email.kmutnb.ac.th</div>
+        </div>
+      </div>
+      <div class="statline">
+        <div><b>5</b><span>รายงานที่ส่ง</span></div>
+        <div><b>3</b><span>เสร็จสมบูรณ์</span></div>
+        <div><b>5</b><span>คนกดยืนยัน</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>รายงานของฉันอยู่ขั้นไหน</h3>
+      <div class="bar">
+        <i style="background:var(--mid);width:20%"></i>
+        <i style="background:var(--accent);width:20%"></i>
+        <i style="background:var(--low);width:60%"></i>
+      </div>
+      <div class="legend">
+        <div><i style="background:var(--mid)"></i><span>รอตรวจสอบ</span><b>1</b></div>
+        <div><i style="background:var(--accent)"></i><span>กำลังดำเนินการ</span><b>1</b></div>
+        <div><i style="background:var(--low)"></i><span>เสร็จสมบูรณ์</span><b>3</b></div>
+        <div><i style="background:var(--border-strong)"></i><span>ไม่อนุมัติ</span><b>0</b></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>รายงานล่าสุด</h3>
+      <div class="mini">
+        <a href="#"><i class="dot" style="background:var(--high)"></i>
+          <span class="tx"><b>มีคนเดินตามหลังตั้งแต่ประตูวงศ์สว่าง</b><span>8 ก.ย. 16:06</span></span>
+          <span class="pill st">กำลังดำเนินการ</span></a>
+        <a href="#"><i class="dot" style="background:var(--mid)"></i>
+          <span class="tx"><b>น้ำขังสูง 10 ซม. ตลอดทางเดิน</b><span>8 ก.ย. 16:05</span></span>
+          <span class="pill st">รอตรวจสอบ</span></a>
+      </div>
+      <div class="cardfoot"><button class="linky">ดูรายงานทั้งหมด 5 รายการ →</button></div>
+    </div>
+
+    <div class="card">
+      <h3>บัญชี</h3>
+      <div class="kvrow"><span>สมัครเมื่อ</span><span class="mono">8 ก.ย. 2569</span></div>
+      <div style="margin-top:14px"><button class="btn wide">ออกจากระบบ</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ C ============ -->
+<div class="col">
+  <div class="hd"><span class="tag">แบบ C</span><b class="h">มีการตั้งค่าจริง 1 อัน</b></div>
+  <p class="why">เหมือน B แต่เก็บสวิตช์ไว้ตัวเดียวที่ทำงานจริงได้ — "ส่งแบบไม่เปิดเผยชื่อทุกครั้ง" เพราะตาราง <span class="mono">user_settings</span> มีช่องนี้รออยู่แล้ว · ต้องเขียน PHP เพิ่ม 1 ไฟล์</p>
+  <div class="stack">
+
+    <div class="card">
+      <div class="prof">
+        <div class="big">p</div>
+        <div>
+          <h2>ssping</h2>
+          <span class="rolebadge">ผู้ใช้ทั่วไป</span>
+          <div class="sub mono">123456790 · s123456790@email.kmutnb.ac.th</div>
+        </div>
+      </div>
+      <div class="statline">
+        <div><b>5</b><span>รายงานที่ส่ง</span></div>
+        <div><b>3</b><span>เสร็จสมบูรณ์</span></div>
+        <div><b>5</b><span>คนกดยืนยัน</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>รายงานของฉันอยู่ขั้นไหน</h3>
+      <div class="bar">
+        <i style="background:var(--mid);width:20%"></i>
+        <i style="background:var(--accent);width:20%"></i>
+        <i style="background:var(--low);width:60%"></i>
+      </div>
+      <div class="legend">
+        <div><i style="background:var(--mid)"></i><span>รอตรวจสอบ</span><b>1</b></div>
+        <div><i style="background:var(--accent)"></i><span>กำลังดำเนินการ</span><b>1</b></div>
+        <div><i style="background:var(--low)"></i><span>เสร็จสมบูรณ์</span><b>3</b></div>
+      </div>
+      <div class="cardfoot"><button class="linky">ดูรายงานทั้งหมด 5 รายการ →</button></div>
+    </div>
+
+    <div class="card">
+      <h3>การตั้งค่า</h3>
+      <div class="switch">
+        <div class="lbl">
+          <span>ส่งรายงานแบบไม่เปิดเผยชื่อทุกครั้ง<span class="newtag">บันทึกจริง</span></span>
+          <span>เปิดไว้แล้วฟอร์มแจ้งเหตุจะติ๊กให้เองทุกครั้ง</span>
+        </div>
+        <button type="button" class="tg" aria-pressed="false"></button>
+      </div>
+      <p class="note"><b style="color:var(--text)">การแจ้งเตือน</b> — ระบบแจ้งผลการตรวจสอบให้ในหน้า “การแจ้งเตือน” เสมอ ปิดไม่ได้ และไม่ส่งเข้ามือถือหรืออีเมล</p>
+    </div>
+
+    <div class="card">
+      <h3>บัญชี</h3>
+      <div class="kvrow"><span>สมัครเมื่อ</span><span class="mono">8 ก.ย. 2569</span></div>
+      <div class="kvrow"><span>สถานะบัญชี</span><span class="pill low">ใช้งานได้</span></div>
+      <div style="margin-top:14px"><button class="btn wide">ออกจากระบบ</button></div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<style>
+/* ---- D : timeline ---- */
+.tl{display:grid;gap:0;margin-top:4px}
+.tl div{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:0 0 14px;position:relative}
+.tl div:last-child{padding-bottom:0}
+.tl i{width:9px;height:9px;border-radius:999px;margin-top:6px;flex:none;position:relative;z-index:1}
+.tl div:not(:last-child)::before{content:"";position:absolute;left:4px;top:13px;bottom:0;width:1px;background:var(--border)}
+.tl b{display:block;font-size:13px;font-weight:600;line-height:1.4}
+.tl span{font-size:11.5px;color:var(--dim)}
+.bigstat{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2px}
+.bigstat div{background:var(--elev);border:1px solid var(--border);border-radius:var(--r-m);padding:12px 13px}
+.bigstat b{display:block;font-family:var(--f-mono);font-size:24px;font-weight:500;line-height:1.2}
+.bigstat span{font-size:11.5px;color:var(--dim)}
+.topspot{display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 13px;background:var(--elev);border:1px solid var(--border);border-radius:var(--r-m);font-size:12.5px}
+.topspot b{font-size:13px}
+
+/* ---- E : compact single card ---- */
+.compact{padding:0}
+.chead{display:flex;gap:14px;align-items:center;padding:16px}
+.chead .big{width:48px;height:48px;font-size:18px}
+.crow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--border);font-size:13px}
+.crow>span:first-child{color:var(--dim);font-size:12.5px}
+.crow .v{font-weight:600}
+.crow.act{cursor:pointer}
+.crow.act:hover{background:var(--elev)}
+.chev{color:var(--dim);font-size:15px}
+
+/* ---- F : tabs ---- */
+.tabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border-bottom:1px solid var(--border);margin:0 -16px 0}
+.tabs button{padding:11px 8px;font:inherit;font-size:13px;font-weight:600;background:none;border:none;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--text);border-bottom-color:var(--accent-2)}
+.tabbody{padding-top:14px}
+</style>
+
+<div class="row" style="margin-top:34px">
+
+<!-- ============ D ============ -->
+<div class="col">
+  <div class="hd"><span class="tag">แบบ D</span><b class="h">เน้นผลลัพธ์ — "คุณช่วยอะไรไปบ้าง"</b></div>
+  <p class="why">เปลี่ยนจากหน้าตั้งค่าเป็นหน้าสรุปการมีส่วนร่วม มีไทม์ไลน์กิจกรรมล่าสุดและจุดที่แจ้งบ่อยที่สุด · ทำให้คนอยากแจ้งต่อ และเล่าเป็นเรื่องได้ตอนพรีเซนต์</p>
+  <div class="stack">
+
+    <div class="card">
+      <div class="prof">
+        <div class="big">p</div>
+        <div>
+          <h2>ssping</h2>
+          <span class="rolebadge">ผู้ใช้ทั่วไป</span>
+          <div class="sub mono">123456790 · s123456790@email.kmutnb.ac.th</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>ผลจากการแจ้งของคุณ</h3>
+      <div class="bigstat">
+        <div><b>3</b><span>เรื่องได้รับการแก้ไขแล้ว</span></div>
+        <div><b>5</b><span>คนยืนยันว่าเจอเหมือนกัน</span></div>
+        <div><b>5</b><span>รายงานทั้งหมด</span></div>
+        <div><b>2</b><span>ยังอยู่ระหว่างดำเนินการ</span></div>
+      </div>
+      <div class="topspot">
+        <i class="dot" style="width:9px;height:9px;border-radius:999px;background:var(--high)"></i>
+        <span>จุดที่คุณแจ้งบ่อยที่สุด <b>ทางเดินริมคลองบางซื่อ</b> · 4 ครั้ง</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>กิจกรรมล่าสุด</h3>
+      <div class="tl">
+        <div><i style="background:var(--low)"></i><span class="tx"><b>เจ้าหน้าที่ปิดเรื่อง “ไฟทางเดินดับ 3 เสาติดกัน”</b><span>8 ก.ย. 2569 · 14:20</span></span></div>
+        <div><i style="background:var(--accent)"></i><span class="tx"><b>คุณแจ้ง “มีคนเดินตามหลังตั้งแต่ประตูวงศ์สว่าง”</b><span>8 ก.ย. 2569 · 16:06</span></span></div>
+        <div><i style="background:var(--mid)"></i><span class="tx"><b>มีคนกดยืนยันรายงานน้ำท่วมขังของคุณ 2 คน</b><span>8 ก.ย. 2569 · 16:30</span></span></div>
+        <div><i style="background:var(--border-strong)"></i><span class="tx"><b>สมัครเข้าใช้งาน</b><span>8 ก.ย. 2569</span></span></div>
+      </div>
+      <div class="cardfoot"><button class="linky">ดูรายงานทั้งหมด 5 รายการ →</button></div>
+    </div>
+
+    <div class="card">
+      <div><button class="btn wide">ออกจากระบบ</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ E ============ -->
+<div class="col">
+  <div class="hd"><span class="tag">แบบ E</span><b class="h">การ์ดเดียวจบ — มือถือมาก่อน</b></div>
+  <p class="why">ยุบทุกอย่างเหลือการ์ดเดียว ข้อมูลเป็นแถวเรียงลงมาแบบหน้าตั้งค่าในมือถือ · เลื่อนสั้นที่สุด เปิดบนมือถือจบในหน้าเดียวไม่ต้องสกรอลล์</p>
+  <div class="stack">
+
+    <div class="card compact">
+      <div class="chead">
+        <div class="big">p</div>
+        <div>
+          <h2 style="font-size:17px">ssping</h2>
+          <span class="rolebadge">ผู้ใช้ทั่วไป</span>
+        </div>
+      </div>
+      <div class="crow"><span>รหัสนักศึกษา</span><span class="v mono">123456790</span></div>
+      <div class="crow"><span>อีเมล</span><span class="v mono" style="font-size:12px">s123456790@email.kmutnb.ac.th</span></div>
+      <div class="crow"><span>สมัครเมื่อ</span><span class="v mono">8 ก.ย. 2569</span></div>
+      <div class="crow"><span>สถานะบัญชี</span><span class="pill low">ใช้งานได้</span></div>
+      <div class="crow act"><span>รายงานที่ส่ง</span><span class="v">5 <span class="chev">›</span></span></div>
+      <div class="crow act"><span>กำลังดำเนินการ</span><span class="v">2 <span class="chev">›</span></span></div>
+      <div class="crow act"><span>เสร็จสมบูรณ์</span><span class="v">3 <span class="chev">›</span></span></div>
+      <div class="crow"><span>คนกดยืนยันรายงานของคุณ</span><span class="v">5</span></div>
+      <div class="crow act"><span>การแจ้งเตือนที่ยังไม่อ่าน</span><span class="v">2 <span class="chev">›</span></span></div>
+      <div style="padding:14px 16px;border-top:1px solid var(--border)">
+        <button class="btn wide">ออกจากระบบ</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============ F ============ -->
+<div class="col">
+  <div class="hd"><span class="tag">แบบ F</span><b class="h">แบ่งแท็บ — ขยายได้ทีหลัง</b></div>
+  <p class="why">การ์ดเดียวแต่มี 3 แท็บ ภาพรวม / รายงานของฉัน / บัญชี · หน้าไม่ยาว และถ้าวันหลังอยากเพิ่มอะไรก็แค่เพิ่มแท็บ ไม่ต้องรื้อ</p>
+  <div class="stack">
+
+    <div class="card">
+      <div class="prof">
+        <div class="big">p</div>
+        <div>
+          <h2>ssping</h2>
+          <span class="rolebadge">ผู้ใช้ทั่วไป</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="tabCard">
+      <div class="tabs">
+        <button class="on" data-t="ov">ภาพรวม</button>
+        <button data-t="rp">รายงานของฉัน</button>
+        <button data-t="ac">บัญชี</button>
+      </div>
+
+      <div class="tabbody" data-p="ov">
+        <div class="bar">
+          <i style="background:var(--mid);width:20%"></i>
+          <i style="background:var(--accent);width:20%"></i>
+          <i style="background:var(--low);width:60%"></i>
+        </div>
+        <div class="legend">
+          <div><i style="background:var(--mid)"></i><span>รอตรวจสอบ</span><b>1</b></div>
+          <div><i style="background:var(--accent)"></i><span>กำลังดำเนินการ</span><b>1</b></div>
+          <div><i style="background:var(--low)"></i><span>เสร็จสมบูรณ์</span><b>3</b></div>
+        </div>
+        <div class="topspot">
+          <span>คนกดยืนยันรายงานของคุณรวม <b>5 คน</b></span>
+        </div>
+      </div>
+
+      <div class="tabbody" data-p="rp" hidden>
+        <div class="mini" style="margin-top:0;border-top:none">
+          <a href="#"><i class="dot" style="background:var(--high)"></i>
+            <span class="tx"><b>มีคนเดินตามหลังตั้งแต่ประตูวงศ์สว่าง</b><span>8 ก.ย. 16:06</span></span>
+            <span class="pill st">กำลังดำเนินการ</span></a>
+          <a href="#"><i class="dot" style="background:var(--mid)"></i>
+            <span class="tx"><b>น้ำขังสูง 10 ซม. ตลอดทางเดิน</b><span>8 ก.ย. 16:05</span></span>
+            <span class="pill st">รอตรวจสอบ</span></a>
+          <a href="#"><i class="dot" style="background:var(--low)"></i>
+            <span class="tx"><b>ไฟทางเดินดับ 3 เสาติดกัน</b><span>8 ก.ย. 13:09</span></span>
+            <span class="pill low">เสร็จสมบูรณ์</span></a>
+        </div>
+        <div class="cardfoot"><button class="linky">ดูทั้งหมด 5 รายการ →</button></div>
+      </div>
+
+      <div class="tabbody" data-p="ac" hidden>
+        <div class="kvrow"><span>ชื่อผู้ใช้</span><span class="mono">ssping</span></div>
+        <div class="kvrow"><span>รหัสนักศึกษา</span><span class="mono">123456790</span></div>
+        <div class="kvrow"><span>อีเมล</span><span class="mono" style="font-size:12px">s123456790@email.kmutnb.ac.th</span></div>
+        <div class="kvrow"><span>สมัครเมื่อ</span><span class="mono">8 ก.ย. 2569</span></div>
+        <div class="kvrow"><span>สถานะบัญชี</span><span class="pill low">ใช้งานได้</span></div>
+        <div style="margin-top:14px"><button class="btn wide">ออกจากระบบ</button></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+(function(){
+  var c = document.getElementById('tabCard');
+  c.querySelectorAll('[data-t]').forEach(function(b){
+    b.onclick = function(){
+      c.querySelectorAll('[data-t]').forEach(function(x){ x.classList.toggle('on', x===b); });
+      c.querySelectorAll('[data-p]').forEach(function(p){ p.hidden = p.dataset.p !== b.dataset.t; });
+    };
+  });
+})();
+</script>
+
+<p class="foot">
+<b style="color:var(--text)">งานที่ต้องทำต่างกัน</b><br>
+<b style="color:var(--text)">A · B · D · E · F</b> — แก้แค่ไฟล์หน้าเว็บ ไม่ต้องแตะฐานข้อมูลหรือ PHP เลย<br>
+<b style="color:var(--text)">C</b> — เพิ่มไฟล์ <span class="mono">api/settings.php</span> กับส่งค่า <span class="mono">always_anonymous</span> มาตอนโหลด ถึงจะบันทึกได้จริง<br>
+<b style="color:var(--text)">D</b> — “กิจกรรมล่าสุด” ดึงจากตาราง <span class="mono">report_status_logs</span> ที่มีอยู่แล้ว แต่ต้องส่งข้อมูลมาเพิ่มตอนโหลด (แก้ PHP นิดหน่อย) ถ้าไม่อยากแตะ PHP ผมทำแบบใช้ข้อมูลที่มีอยู่แล้วก็ได้ แค่ไทม์ไลน์จะสั้นลง<br><br>
+เลือกได้มากกว่า 1 แบบ เช่น “เอา B แต่ใช้การ์ดบนสุดของ E”
+</p>
+
+</div>
+</body>
+</html>

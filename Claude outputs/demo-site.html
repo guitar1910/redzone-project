@@ -1,0 +1,646 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RedZone — เดโม่ทั้งเว็บ</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Bai+Jamjuree:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#181818;--panel:#222;--elev:#2E2E2E;--text:#EDEDED;--dim:#9B9B9B;
+  --border:#393939;--border-strong:#4E4E4E;--accent:#EDEDED;--accent-2:#fff;
+  --on-accent:#1A1A1A;--accent-soft:#333;--r-l:14px;--r-m:10px;--r-s:7px;
+  --high:#DE8A81;--mid:#CFAE63;--low:#7FBE97;
+  --high-soft:#332827;--mid-soft:#322E25;--low-soft:#262F2A;
+  --f-body:"IBM Plex Sans Thai","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-display:"Bai Jamjuree",system-ui,sans-serif;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -14px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{margin:0;background:#0B0B0B;color:var(--text);font-family:var(--f-body);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;padding:0}
+
+/* ---------- demo chrome ---------- */
+.demobar{position:sticky;top:0;z-index:50;background:#141414;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.demobar .lbl{font-family:var(--f-display);font-size:14px;font-weight:700;letter-spacing:.06em}
+.demobar .hint{color:var(--dim);font-size:12px}
+.seg{display:flex;background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:3px;gap:3px}
+.seg button{padding:5px 13px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--dim)}
+.seg button.on{background:var(--accent);color:var(--on-accent)}
+.stage{padding:16px;display:grid;place-items:start center}
+.device{width:100%;max-width:1340px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 30px 80px -40px #000}
+.device.phone{max-width:400px}
+
+/* ---------- app shell ---------- */
+.app{display:grid;grid-template-columns:232px 1fr;grid-template-rows:auto 1fr;min-height:760px}
+.phone .app{grid-template-columns:1fr;min-height:700px}
+.topbar{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);background:var(--bg)}
+.wordmark b{font-family:var(--f-display);font-weight:700;font-size:16px;letter-spacing:.18em;text-transform:uppercase}
+.wordmark span{color:var(--dim);font-size:11px;margin-left:7px}
+.sp{flex:1}
+.who{display:flex;align-items:center;gap:9px}
+.avatar{width:32px;height:32px;border-radius:999px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:14px}
+.who-t b{display:block;font-size:12.5px;font-weight:600}
+.who-t span{font-size:11px;color:var(--dim);font-family:var(--f-mono)}
+.phone .who-t{display:none}
+
+.rail{border-right:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:3px;background:var(--bg)}
+.phone .rail{display:none}
+.rail-lbl{font-size:10.5px;color:var(--dim);font-weight:600;padding:12px 10px 5px}
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--on-accent);border-radius:11px;padding:11px;font-size:13.5px;font-weight:600;margin-bottom:6px;white-space:nowrap}
+.cta svg{width:17px;height:17px;flex:none;stroke-width:2}
+.nav-i{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:9px;font-size:13.5px;color:var(--dim);width:100%;text-align:left}
+.nav-i:hover{background:var(--elev);color:var(--text)}
+.nav-i.on{background:var(--accent-soft);color:var(--text);font-weight:600}
+.nav-i svg{width:17px;height:17px;flex:none;stroke-width:1.6}
+.badge{margin-left:auto;background:var(--high-soft);color:var(--high);font-size:10.5px;font-weight:600;border-radius:999px;padding:1px 7px;font-family:var(--f-mono)}
+.rail-foot{margin-top:auto;padding:12px 10px 0;font-size:10.5px;color:var(--dim);border-top:1px solid var(--border)}
+
+.main{padding:18px 20px 28px;overflow:hidden}
+.phone .main{padding:14px 12px 80px}
+.vhead .eyebrow{font-size:11px;color:var(--dim);font-weight:500}
+.vhead h1{font-size:22px;font-weight:600;margin:4px 0 0;line-height:1.3}
+.phone .vhead h1{font-size:19px}
+.vhead p{margin:6px 0 0;color:var(--dim);font-size:12.5px;max-width:78ch}
+.view{display:none}
+.view.on{display:block}
+
+/* tabbar (phone) */
+.tabbar{display:none}
+.phone .tabbar{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;position:sticky;bottom:0;background:rgba(24,24,24,.96);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:7px 4px 9px}
+.tabbar button{display:grid;justify-items:center;gap:3px;font-size:10.5px;color:var(--dim)}
+.tabbar button.on{color:var(--text);font-weight:600}
+.tabbar svg{width:19px;height:19px;stroke-width:1.6}
+.fab{display:none}
+.phone .fab{display:grid;place-items:center;position:absolute;right:16px;bottom:74px;width:52px;height:52px;border-radius:999px;background:var(--accent);color:var(--on-accent);box-shadow:var(--shadow);font-size:24px;z-index:5}
+
+/* ---------- shared bits ---------- */
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-l);padding:16px}
+.card h3{font-size:14px;font-weight:600;margin:0 0 10px}
+.stack{display:grid;gap:14px}
+.mono{font-family:var(--f-mono)}
+.btn{padding:9px 14px;border-radius:10px;border:1px solid var(--border-strong);background:var(--elev);font-size:13px}
+.btn.pri{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.btn.sm{padding:6px 11px;font-size:12px}
+.btn.danger{color:var(--high);border-color:#5C3A34}
+.btn.wide{width:100%}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
+.pill.high{background:var(--high-soft);color:var(--high)}
+.pill.mid{background:var(--mid-soft);color:var(--mid)}
+.pill.low{background:var(--low-soft);color:var(--low)}
+.pill.st{background:var(--elev);color:var(--dim);font-weight:500}
+.rolebadge{display:inline-flex;margin-top:5px;font-size:11px;font-weight:600;color:var(--dim);background:var(--elev);border:1px solid var(--border);border-radius:999px;padding:3px 10px}
+.rolebadge.adm{color:var(--high);background:var(--high-soft);border-color:var(--high-soft)}
+
+/* toolbar + map page */
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 12px}
+.search{flex:1;min-width:170px;display:flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--border);border-radius:999px;padding:8px 15px;color:var(--dim);font-size:13px}
+.chip{padding:6px 12px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--dim);background:var(--panel);display:inline-flex;align-items:center;gap:6px}
+.chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.chip i{width:7px;height:7px;border-radius:999px;display:block}
+
+.maplayout{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;height:560px}
+.phone .maplayout{grid-template-columns:1fr;height:auto}
+.map{position:relative;background:#1E1E1E;background-image:
+  linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px),
+  radial-gradient(circle at 34% 58%,rgba(127,190,151,.10),transparent 42%),
+  radial-gradient(circle at 66% 34%,rgba(222,138,129,.09),transparent 46%);
+  background-size:36px 36px,36px 36px,100% 100%,100% 100%;
+  border:1px solid var(--border);border-radius:var(--r-l);overflow:hidden}
+.phone .map{height:300px}
+.map .zoom{position:absolute;left:12px;top:12px;display:grid;background:var(--panel);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.map .zoom span{width:27px;height:27px;display:grid;place-items:center;font-size:15px;border-bottom:1px solid var(--border)}
+.map .zoom span:last-child{border-bottom:none}
+.map .scope{position:absolute;border:1.5px dashed rgba(255,255,255,.16);border-radius:999px;left:50%;top:50%;transform:translate(-50%,-50%)}
+.pin{position:absolute;width:14px;height:14px;border-radius:999px;border:2px solid rgba(0,0,0,.55);cursor:pointer;transition:transform .12s}
+.pin:hover{transform:scale(1.25)}
+.pin.sel{box-shadow:0 0 0 6px rgba(255,255,255,.16)}
+.lg{position:absolute;left:12px;bottom:12px;background:rgba(34,34,34,.9);border:1px solid var(--border);border-radius:var(--r-m);padding:8px 11px;font-size:11px;color:var(--dim);display:grid;gap:4px}
+.lg i{display:inline-block;width:8px;height:8px;border-radius:999px;margin-right:7px}
+
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-l);overflow:hidden;display:flex;flex-direction:column;min-height:0}
+.sect{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--elev);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--dim);flex:none}
+.sect .count{margin-left:auto;font-family:var(--f-mono);font-size:11px;font-weight:400}
+.feed{overflow-y:auto;flex:1;min-height:0}
+.phone .feed{max-height:340px}
+.item{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);align-items:start;width:100%;text-align:left}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--elev)}
+.item.sel{background:var(--accent-soft)}
+.sev{width:9px;height:9px;border-radius:999px;margin-top:6px;flex:none}
+.i-cat{display:inline-block;font-size:10px;font-weight:600;color:var(--dim);background:var(--elev);border:1px solid var(--border);border-radius:999px;padding:1px 7px;margin-bottom:4px}
+.i-desc{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:600;font-size:12.5px;line-height:1.4}
+.i-desc.none{font-weight:400;font-style:italic;color:var(--dim)}
+.meta{color:var(--dim);font-size:11px;margin-top:3px;display:block}
+.detail{padding:14px;overflow-y:auto}
+.detail h3{font-size:15px;font-weight:600;margin:0;line-height:1.35;flex:1}
+.dt-top{display:flex;gap:10px;align-items:flex-start}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:5px 12px;font-size:12.5px;margin:12px 0 0}
+.kv dt{color:var(--dim);font-size:11.5px;margin:0}
+.kv dd{margin:0}
+.notewrap{margin-top:12px;background:var(--elev);border:1px solid var(--border);border-radius:var(--r-m);padding:10px 12px}
+.notelbl{margin:0 0 5px;font-size:11px;color:var(--dim)}
+.note{margin:0;font-size:14px;font-weight:500;line-height:1.55}
+.rowbtns{display:flex;gap:8px;margin-top:13px;flex-wrap:wrap}
+.back{display:none;align-items:center;gap:7px;padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;font-weight:600;text-align:left;flex:none;width:100%}
+.phone .panel.has-sel .back{display:flex}
+.phone .panel.has-sel .pnl-list{display:none}
+.phone .panel.has-sel .pnl-h0{display:none}
+.phone .panel:not(.has-sel) .pnl-sel{display:none}
+.pnl-sel{display:flex;flex-direction:column;min-height:0;flex:1 1 55%}
+.pnl-sel .detail{flex:1;min-height:0}
+.pnl-list{display:flex;flex-direction:column;min-height:0;flex:1 1 45%;border-top:1px solid var(--border)}
+
+/* form */
+.rz{display:grid;gap:16px;margin-top:16px;max-width:840px}
+.field{display:grid;gap:7px}
+.field > label{font-size:12.5px;color:var(--dim);font-weight:500}
+.optgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:9px}
+.opt{display:flex;align-items:center;gap:10px;padding:13px;border:1px solid var(--border);border-radius:var(--r-m);background:var(--panel);font-size:13px;text-align:left}
+.opt.on{border-color:var(--accent);background:var(--accent-soft)}
+.opt svg{width:18px;height:18px;flex:none;stroke-width:1.5}
+.sevgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px}
+.sevopt{display:flex;align-items:center;gap:9px;padding:11px 13px;border:1px solid var(--border);border-radius:var(--r-m);background:var(--panel);font-size:13px}
+.sevopt i{width:9px;height:9px;border-radius:999px}
+.sevopt.on{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.inp{background:var(--panel);border:1px solid var(--border);border-radius:var(--r-m);padding:10px 13px;font-size:13.5px;color:var(--text);width:100%}
+textarea.inp{min-height:88px;resize:vertical;font-family:inherit}
+.fmerr{margin:2px 0 0;font-size:12.5px;font-weight:500;color:var(--high)}
+.drop{border:1px dashed var(--border-strong);border-radius:var(--r-m);padding:18px;text-align:center;display:grid;gap:5px;color:var(--dim);font-size:12px;background:var(--panel)}
+.drop b{color:var(--text);font-size:13px}
+.soon-tag{justify-self:center;font-size:10.5px;font-weight:600;color:var(--mid);background:var(--mid-soft);border-radius:999px;padding:2px 9px}
+.switch{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.switch:last-child{border-bottom:none}
+.switch .lbl{display:grid;gap:2px;flex:1}
+.switch .lbl>span:first-child{font-size:13.5px}
+.switch .lbl>span+span{font-size:11.5px;color:var(--dim)}
+.tg{width:44px;height:26px;border-radius:999px;background:var(--border-strong);position:relative;flex:none;transition:background .15s}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:#fff;transition:transform .15s}
+.tg.on{background:var(--accent)}
+.tg.on::after{transform:translateX(18px)}
+.lockpill{font-size:10px;font-weight:600;background:var(--elev);border:1px solid var(--border);border-radius:999px;padding:1px 7px;color:var(--dim);margin-left:6px}
+.formfoot{display:flex;gap:9px;padding-top:4px}
+
+/* lists / tables */
+.rcard{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.rcard h3{margin:0;font-size:14.5px;line-height:1.35}
+.stages{display:flex;gap:6px;margin-top:12px}
+.stg{flex:1;display:grid;gap:5px}
+.stg i{height:4px;border-radius:999px;background:var(--border-strong);display:block}
+.stg.done i{background:var(--low)}
+.stg.now i{background:var(--accent)}
+.stg span{font-size:10.5px;color:var(--dim)}
+.stg.now span{color:var(--text);font-weight:600}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;font-size:11px;color:var(--dim);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--elev)}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-l);background:var(--panel)}
+.alert{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:13px 15px;border-bottom:1px solid var(--border)}
+.alert:last-child{border-bottom:none}
+.ico{width:30px;height:30px;border-radius:999px;background:var(--elev);display:grid;place-items:center;color:var(--dim)}
+.ico svg{width:15px;height:15px;stroke-width:1.7;fill:none;stroke:currentColor}
+.alert.unread{background:rgba(237,237,237,.03)}
+.alert b{font-size:13px;font-weight:600}
+.alert p{margin:2px 0 0;font-size:12px;color:var(--dim)}
+.alert .t{font-size:11px;color:var(--dim);margin-top:4px;font-family:var(--f-mono)}
+
+/* profile D */
+.prof{display:flex;gap:16px;align-items:center}
+.prof .big{width:58px;height:58px;border-radius:999px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:var(--f-display);font-weight:600;font-size:21px;flex:none}
+.prof h2{font-size:18px;font-weight:600;margin:0}
+.prof .sub{color:var(--dim);font-size:12.5px;margin-top:3px}
+.bigstat{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:11px}
+.bigstat div{background:var(--elev);border:1px solid var(--border);border-radius:var(--r-m);padding:12px 13px}
+.bigstat b{display:block;font-family:var(--f-mono);font-size:23px;font-weight:500;line-height:1.2}
+.bigstat span{font-size:11.5px;color:var(--dim)}
+.topspot{display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 13px;background:var(--elev);border:1px solid var(--border);border-radius:var(--r-m);font-size:12.5px;color:var(--dim)}
+.topspot i{width:9px;height:9px;border-radius:999px;background:var(--low);flex:none}
+.topspot b{color:var(--text);font-size:13px}
+.tl > div{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:0 0 14px;position:relative}
+.tl > div:last-child{padding-bottom:0}
+.tl i{width:9px;height:9px;border-radius:999px;margin-top:6px;position:relative;z-index:1}
+.tl > div:not(:last-child)::before{content:"";position:absolute;left:4px;top:13px;bottom:0;width:1px;background:var(--border)}
+.tl b{display:block;font-size:13px;font-weight:600;line-height:1.4}
+.tl em{font-style:normal;font-size:11.5px;color:var(--dim)}
+.kvrow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.kvrow:last-of-type{border-bottom:none}
+.kvrow>span:first-child{color:var(--dim)}
+.cardfoot{margin:14px -16px -16px;padding:11px 16px;border-top:1px solid var(--border);text-align:center}
+.linky{color:var(--accent);font-size:12.5px;font-weight:600}
+
+/* login */
+.login{display:grid;place-items:center;min-height:700px;padding:40px 22px}
+.loginform{width:100%;max-width:370px;display:grid;gap:20px}
+.loginhead{display:grid;gap:8px;justify-items:center;text-align:center}
+.loginhead .wm{font-family:var(--f-display);font-weight:700;font-size:32px;letter-spacing:.2em;text-transform:uppercase;color:#B0B0B0}
+.loginhead p{font-size:13.5px;color:var(--dim);max-width:34ch;margin:0}
+.pane{display:grid;gap:14px}
+.pane h2{font-size:21px;font-weight:600;margin:0}
+.pane .inp{border-radius:999px;padding:12px 16px}
+.swline{font-size:12.5px;color:var(--dim);text-align:center;margin:0}
+</style>
+</head>
+<body>
+
+<div class="demobar">
+  <span class="lbl">REDZONE · เดโม่ทั้งเว็บ</span>
+  <div class="seg" id="roleSeg">
+    <button class="on" data-role="user">ผู้ใช้ทั่วไป</button>
+    <button data-role="admin">ผู้ดูแลระบบ</button>
+  </div>
+  <div class="seg" id="devSeg">
+    <button class="on" data-dev="desk">จอคอม</button>
+    <button data-dev="phone">มือถือ</button>
+  </div>
+  <button class="btn sm" id="toLogin">ดูหน้าล็อกอิน</button>
+  <span class="hint">กดเมนูซ้าย · กดหมุดบนแผนที่ · กดรายการ — เดินได้ทุกหน้า</span>
+</div>
+
+<div class="stage">
+  <div class="device" id="device">
+
+    <!-- ===== LOGIN ===== -->
+    <div class="login" id="loginScreen" style="display:none">
+      <div class="loginform">
+        <div class="loginhead">
+          <div class="wm">Red Zone</div>
+          <p>แจ้งเหตุและดูพื้นที่เสี่ยงในรัศมี 10 กม. รอบ มจพ. ด้วยบัญชีของมหาวิทยาลัย</p>
+        </div>
+        <div class="pane">
+          <h2>เข้าสู่ระบบ</h2>
+          <div class="field"><label>ชื่อผู้ใช้</label><input class="inp" placeholder="ชื่อผู้ใช้ของคุณ"></div>
+          <div class="field"><label>รหัสผ่าน</label><input class="inp" type="password" placeholder="รหัสผ่าน"></div>
+          <button class="btn pri wide" style="border-radius:999px;padding:12px" id="doLogin">เข้าสู่ระบบ</button>
+          <p class="swline">ยังไม่มีบัญชี? <b style="color:var(--accent)">สมัครสมาชิก</b></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APP ===== -->
+    <div class="app" id="app">
+      <header class="topbar">
+        <div class="wordmark"><b>Red Zone</b><span>มจพ.</span></div>
+        <div class="sp"></div>
+        <div class="who">
+          <div class="avatar" id="tbAv">p</div>
+          <div class="who-t"><b id="tbName">ping (ผู้ใช้ทั่วไป)</b><span id="tbCode">123456790</span></div>
+        </div>
+      </header>
+
+      <nav class="rail" id="rail"></nav>
+
+      <main class="main" style="position:relative">
+        <div id="views"></div>
+        <button class="fab" id="fab">+</button>
+        <div class="tabbar" id="tabbar"></div>
+      </main>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ============ mock data (โครงเดียวกับของจริง) ============ */
+const CATS = [
+  {id:'light', name:'ไฟส่องสว่างชำรุด', d:'M12 3v2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M17.7 6.3l1.4-1.4M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z'},
+  {id:'walk',  name:'ทางเดิน/พื้นชำรุด', d:'M3 18h18M6 18l3-9M15 18l3-9M9 9h6'},
+  {id:'harass',name:'การคุกคาม/ตามรบกวน', d:'M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM4 21a8 8 0 0 1 12-6.9M18 16v3M18 21.5v.01'},
+  {id:'theft', name:'ลักทรัพย์/ทรัพย์สินเสียหาย', d:'M4 8h16v12H4zM9 8V6a3 3 0 0 1 6 0v2M12 13v3'},
+  {id:'traffic',name:'อุบัติเหตุจราจร', d:'M5 17h14M7 17V9l2-4h6l2 4v8M7 13h10M8 20v-3M16 20v-3'},
+  {id:'flood', name:'น้ำท่วมขัง/สิ่งกีดขวาง', d:'M3 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0M12 3v6'},
+  {id:'other', name:'อื่น ๆ (ระบุเอง)', d:'M12 17v.01M12 13.5a2.5 2.5 0 1 0-2.5-3.5M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z'}
+];
+const STAGES=[{id:'sent',n:'ส่งแล้ว'},{id:'ack',n:'รับเรื่องแล้ว'},{id:'prog',n:'กำลังดำเนินการ'},{id:'done',n:'เสร็จสมบูรณ์'}];
+const SEVT={high:'สูง',mid:'กลาง',low:'ต่ำ'};
+
+const R = [
+ {id:'RZ-2569-0156',cat:'light',sev:'mid',stage:'prog',ok:1,mine:1,loc:'ทางเดินริมคลองบางซื่อ',note:'ไฟดับตลอดแนวทางเดิน มืดมากช่วงกลางคืน เดินคนเดียวไม่ค่อยกล้า',time:'8 ก.ย. 2569 16:36',conf:1,cm:0,x:47,y:44,dist:'752 ม.'},
+ {id:'RZ-2569-0155',cat:'harass',sev:'high',stage:'ack',ok:1,mine:1,loc:'ประตูวงศ์สว่าง',note:'มีคนเดินตามตั้งแต่ประตูวงศ์สว่างจนถึงหอพัก ประมาณสามทุ่ม',time:'8 ก.ย. 2569 16:06',conf:3,cm:2,x:53,y:39,dist:'1.1 กม.'},
+ {id:'RZ-2569-0154',cat:'flood',sev:'mid',stage:'sent',ok:0,mine:1,loc:'ทางเดินริมคลองบางซื่อ',note:'น้ำขังสูงประมาณ 10 ซม. ยาวตลอดทางเดิน เดินเลี่ยงไม่ได้',time:'8 ก.ย. 2569 16:05',conf:0,cm:0,x:44,y:51,dist:'760 ม.'},
+ {id:'RZ-2569-0152',cat:'walk',sev:'low',stage:'done',ok:1,mine:1,loc:'หน้าหอสมุดกลาง',note:'พื้นทางเดินแตกร้าว ต่างระดับประมาณ 4 ซม. สะดุดง่าย',time:'7 ก.ย. 2569 12:10',conf:5,cm:1,x:56,y:55,dist:'180 ม.'},
+ {id:'RZ-2569-0149',cat:'theft',sev:'mid',stage:'done',ok:1,mine:0,loc:'ลานจอดรถอาคาร 62',note:'จักรยานที่จอดไว้หน้าตึกหายไป ล็อกไว้แล้วแต่โซ่ถูกตัด',time:'7 ก.ย. 2569 09:20',conf:2,cm:0,x:50,y:60,dist:'240 ม.'},
+ {id:'RZ-2569-0147',cat:'traffic',sev:'high',stage:'prog',ok:1,mine:0,loc:'ประตูพิบูลสงคราม',note:'มอเตอร์ไซค์ขี่สวนเลนบนทางเท้า เกือบชนคนเดินช่วงเลิกเรียน',time:'6 ก.ย. 2569 07:45',conf:8,cm:3,x:60,y:47,dist:'420 ม.'},
+ {id:'RZ-2569-0146',cat:'light',sev:'low',stage:'reject',ok:0,mine:0,loc:'สนามกีฬา',note:'',time:'6 ก.ย. 2569 09:15',conf:0,cm:0,x:38,y:57,dist:'610 ม.',rej:'ข้อมูลไม่พอให้ตรวจสอบ'},
+ {id:'RZ-2569-0144',cat:'flood',sev:'mid',stage:'ack',ok:0,mine:0,loc:'ใต้สะพานพระราม 7',note:'ท่อระบายอุดตัน น้ำขังทุกครั้งที่ฝนตกเกิน 30 นาที',time:'5 ก.ย. 2569 08:20',conf:1,cm:0,x:34,y:64,dist:'2.3 กม.'}
+];
+const ALERTS=[
+ {k:'done',t:'RZ-2569-0152 เสร็จสมบูรณ์แล้ว',m:'เจ้าหน้าที่ซ่อมพื้นทางเดินเรียบร้อย',time:'7 ก.ย. 2569 14:20',n:1},
+ {k:'status',t:'RZ-2569-0155 ถูกรับเรื่องแล้ว',m:'อยู่ระหว่างตรวจสอบกล้องวงจรปิด',time:'8 ก.ย. 2569 17:02',n:1},
+ {k:'new',t:'มีคนยืนยันรายงานของคุณ 3 คน',m:'RZ-2569-0155',time:'8 ก.ย. 2569 18:30',n:0},
+ {k:'zone',t:'มีเหตุใหม่ใกล้เส้นทางของคุณ',m:'ทางเดินริมคลองบางซื่อ',time:'5 ก.ย. 2569 21:35',n:0}
+];
+const USERS=[
+ {n:'ping',c:'123456790',e:'s123456790@email.kmutnb.ac.th',r:'user',a:1,rep:4},
+ {n:'user456',c:'1000000456',e:'s1000000456@email.kmutnb.ac.th',r:'user',a:1,rep:2},
+ {n:'user789',c:'1000000789',e:'s1000000789@email.kmutnb.ac.th',r:'user',a:0,rep:6,ban:'แจ้งเหตุเท็จซ้ำหลายครั้ง'},
+ {n:'admin',c:'admin001',e:'admin@email.kmutnb.ac.th',r:'admin',a:1,rep:0}
+];
+const COMMENTS=[
+ {by:'user456',rep:'RZ-2569-0155',tx:'เจอเหมือนกันเมื่อวาน เดินเลี่ยงทางอื่นดีกว่า',time:'8 ก.ย. 2569 18:10'},
+ {by:'user789',rep:'RZ-2569-0147',tx:'ตรงนี้อันตรายมาก ควรมีเจ้าหน้าที่ยืนช่วงเลิกเรียน',time:'6 ก.ย. 2569 08:30'},
+ {by:'ping',rep:'RZ-2569-0152',tx:'ซ่อมแล้วเดินสบายขึ้นเยอะ ขอบคุณครับ',time:'7 ก.ย. 2569 15:00'}
+];
+const AUDIT=[
+ {a:'admin',act:'อนุมัติรายงาน',t:'RZ-2569-0156',time:'8 ก.ย. 2569 17:40'},
+ {a:'admin',act:'ปฏิเสธรายงาน',t:'RZ-2569-0146',time:'6 ก.ย. 2569 09:15',r:'ข้อมูลไม่พอให้ตรวจสอบ'},
+ {a:'admin',act:'ระงับบัญชี',t:'user789',time:'6 ก.ย. 2569 09:18',r:'แจ้งเหตุเท็จซ้ำหลายครั้ง'}
+];
+
+/* ============ helpers ============ */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const catOf=id=>CATS.find(c=>c.id===id)||CATS[0];
+const stageName=s=>s==='reject'?'ไม่อนุมัติ':(STAGES.find(x=>x.id===s)||STAGES[0]).n;
+const svg=(d,cls='')=>`<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
+const ICON={map:'M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2ZM9 3v16M15 5v16',doc:'M15 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7l-4-4ZM9 12h6M9 16h4',bell:'M18 8a6 6 0 1 0-12 0c0 6-2 8-2 8h16s-2-2-2-8ZM10.3 21a2 2 0 0 0 3.4 0',user:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4 21a8 8 0 0 1 16 0',queue:'M4 6h16M4 12h16M4 18h10',chat:'M21 12a8 8 0 0 1-8 8H7l-4 3V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8Z',users:'M9 11.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM3 20a6 6 0 0 1 12 0M17 11h4M19 9v4',clock:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18ZM12 8v4l3 2',plus:'M12 5v14M5 12h14'};
+
+let role='user', dev='desk', page='map', sel=R[0].id, selForm={cat:'',sev:''}, err={cat:0,sev:0};
+const mine=()=>R.filter(r=>r.mine);
+const publicR=()=>R.filter(r=>r.ok && r.stage!=='reject');
+const pending=()=>R.filter(r=>!r.ok && r.stage!=='reject');
+
+/* ============ nav ============ */
+const NAV_USER=[
+  {g:'เมนูหลัก'},{p:'map',t:'แผนที่พื้นที่เสี่ยง',i:'map'},{p:'reports',t:'รายงานของฉัน',i:'doc'},{p:'alerts',t:'การแจ้งเตือน',i:'bell',b:2},
+  {g:'บัญชี'},{p:'profile',t:'โปรไฟล์',i:'user'}
+];
+const NAV_ADMIN=[
+  {g:'เมนูหลัก'},{p:'map',t:'แผนที่พื้นที่เสี่ยง',i:'map'},
+  {g:'จัดการระบบ'},{p:'queue',t:'คิวรอตรวจสอบ',i:'queue',b:3},{p:'allrep',t:'รายงานทั้งหมด',i:'doc'},{p:'cmts',t:'ความคิดเห็น',i:'chat'},{p:'ausers',t:'ผู้ใช้ระบบ',i:'users'},{p:'audit',t:'ประวัติการจัดการ',i:'clock'},
+  {g:'บัญชี'},{p:'profile',t:'โปรไฟล์',i:'user'}
+];
+const TABS_USER=[{p:'map',t:'แผนที่',i:'map'},{p:'reports',t:'รายงาน',i:'doc'},{p:'alerts',t:'แจ้งเตือน',i:'bell'},{p:'profile',t:'โปรไฟล์',i:'user'}];
+const TABS_ADMIN=[{p:'map',t:'แผนที่',i:'map'},{p:'queue',t:'คิวตรวจ',i:'queue'},{p:'allrep',t:'รายงาน',i:'doc'},{p:'profile',t:'โปรไฟล์',i:'user'}];
+
+function renderNav(){
+  const nav = role==='admin'?NAV_ADMIN:NAV_USER;
+  $('#rail').innerHTML =
+    (role==='user'?`<button class="cta" data-p="form">${svg(ICON.plus)}<span>แจ้งเหตุการณ์</span></button>`:'') +
+    nav.map(n=>n.g?`<div class="rail-lbl">${n.g}</div>`
+      :`<button class="nav-i${page===n.p?' on':''}" data-p="${n.p}">${svg(ICON[n.i])}<span>${n.t}</span>${n.b?`<span class="badge">${n.b}</span>`:''}</button>`).join('') +
+    `<div class="rail-foot">ต้นแบบเพื่อการศึกษา · ข้อมูลจำลอง</div>`;
+  const tabs = role==='admin'?TABS_ADMIN:TABS_USER;
+  $('#tabbar').innerHTML = tabs.map(t=>`<button class="${page===t.p?'on':''}" data-p="${t.p}">${svg(ICON[t.i])}<span>${t.t}</span></button>`).join('');
+  $('#fab').style.display = (dev==='phone'&&role==='user')?'grid':'none';
+  $('#tbAv').textContent = role==='admin'?'a':'p';
+  $('#tbName').textContent = role==='admin'?'admin (ผู้ดูแลระบบ)':'ping (ผู้ใช้ทั่วไป)';
+  $('#tbCode').textContent = role==='admin'?'admin001':'123456790';
+}
+
+/* ============ page renderers ============ */
+function vhead(eyebrow,h1,p){return `<div class="vhead"><div class="eyebrow">${eyebrow}</div><h1>${h1}</h1>${p?`<p>${p}</p>`:''}</div>`}
+
+function itemRow(r,selId){
+  const n=r.note.trim();
+  return `<button class="item${r.id===selId?' sel':''}" data-pick="${r.id}">
+    <i class="sev" style="background:var(--${r.sev})"></i>
+    <span><span class="i-cat">${esc(catOf(r.cat).name)}</span>
+    <span class="i-desc${n?'':' none'}">${esc(n||'ไม่มีคำอธิบายเพิ่ม')}</span>
+    <span class="meta">${esc(r.loc)} · ${esc(r.time)}${r.cm?' · 💬 '+r.cm:''}</span></span></button>`;
+}
+
+function detailBox(r){
+  return `<div class="detail">
+    <div class="dt-top"><h3>${esc(catOf(r.cat).name)} — ${esc(r.loc)}</h3><span class="pill ${r.sev}">${SEVT[r.sev]}</span></div>
+    <dl class="kv">
+      <dt>เลขรายงาน</dt><dd class="mono">${r.id}</dd>
+      <dt>ตำแหน่ง</dt><dd>${esc(r.loc)}</dd>
+      <dt>พบเมื่อ</dt><dd class="mono">${esc(r.time)}</dd>
+      <dt>ระยะห่าง</dt><dd>${r.dist} จาก มจพ.</dd>
+      <dt>สถานะ</dt><dd><span class="pill st">${stageName(r.stage)}</span></dd>
+      <dt>ยืนยันโดย</dt><dd>${r.conf} คน</dd>
+    </dl>
+    <div class="notewrap"><p class="notelbl">รายละเอียดจากผู้แจ้ง</p><p class="note">${esc(r.note||'ไม่มีคำอธิบายเพิ่ม')}</p></div>
+    <div class="rowbtns"><button class="btn pri" data-p="form">แจ้งเหตุที่จุดนี้</button><button class="btn">ฉันพบเหตุนี้ด้วย</button></div>
+  </div>`;
+}
+
+function pageMap(){
+  const list=publicR(), r=list.find(x=>x.id===sel)||list[0];
+  return vhead('ขอบเขตพื้นที่ให้บริการ · รัศมี 10 กม. รอบ มจพ.','แผนที่พื้นที่เสี่ยง',
+    `เหตุการณ์ที่ยังไม่ปิด ${list.filter(x=>x.stage!=='done').length} รายการ · ทั้งในและนอกรั้วมหาวิทยาลัย`)+
+  `<div class="toolbar">
+     <div class="search">🔍 ค้นหาอาคาร ประเภทเหตุ หรือเลขรายงาน</div>
+     <span class="chip on">ทั้งหมด</span>
+     <span class="chip"><i style="background:var(--high)"></i>เสี่ยงสูง</span>
+     <span class="chip"><i style="background:var(--mid)"></i>เฝ้าระวัง</span>
+     <span class="chip"><i style="background:var(--low)"></i>ทั่วไป</span>
+   </div>
+   <div class="maplayout">
+     <div class="map">
+       <div class="zoom"><span>+</span><span>−</span></div>
+       <div class="scope" style="width:62%;aspect-ratio:1"></div>
+       ${list.map(x=>`<i class="pin${x.id===(r&&r.id)?' sel':''}" data-pick="${x.id}" style="background:var(--${x.sev});left:${x.x}%;top:${x.y}%" title="${esc(catOf(x.cat).name)}"></i>`).join('')}
+       <div class="lg"><div><i style="background:var(--high)"></i>เสี่ยงสูง — ต้องแก้ไขทันที</div><div><i style="background:var(--mid)"></i>เฝ้าระวัง</div><div><i style="background:var(--low)"></i>ทั่วไป</div><div>⌁ ขอบเขต 10 กม.</div></div>
+     </div>
+     <div class="panel${r?' has-sel':''}">
+       <div class="pnl-sel">
+         <div class="sect pnl-h0"><span>เหตุการณ์ที่เลือก</span></div>
+         <button class="back" data-pick="">← กลับไปรายการ</button>
+         ${r?detailBox(r):''}
+       </div>
+       <div class="pnl-list">
+         <div class="sect"><span>เหตุการณ์ใกล้ฉัน</span><span class="count">${list.length}/${list.length}</span></div>
+         <div class="feed">${list.map(x=>itemRow(x,r&&r.id)).join('')}</div>
+       </div>
+     </div>
+   </div>`;
+}
+
+function pageForm(){
+  return vhead('ขั้นตอนที่ 1 จาก 1','แจ้งเหตุการณ์หรือพื้นที่เสี่ยง','รับแจ้งเหตุในรัศมี 10 กม. รอบมหาวิทยาลัย · ยิ่งระบุตำแหน่งและเวลาละเอียด เจ้าหน้าที่ยิ่งตรวจสอบได้เร็ว')+
+  `<div class="rz">
+    <div class="field"><label>ประเภทเหตุการณ์</label>
+      <div class="optgrid">${CATS.map(c=>`<button class="opt${selForm.cat===c.id?' on':''}" data-cat="${c.id}">${svg(c.d)}<span>${c.name}</span></button>`).join('')}</div>
+      ${err.cat?'<p class="fmerr">กรุณาเลือกประเภทเหตุการณ์</p>':''}
+    </div>
+    ${selForm.cat==='other'?`<div class="field"><label>ระบุประเภทเหตุการณ์</label><input class="inp" placeholder="เช่น ต้นไม้ล้มขวางทางเดิน"></div>`:''}
+    <div class="field"><label>ระดับความเสี่ยง</label>
+      <div class="sevgrid">
+        <button class="sevopt${selForm.sev==='high'?' on':''}" data-sev="high"><i style="background:var(--high)"></i>สูง — อันตรายทันที</button>
+        <button class="sevopt${selForm.sev==='mid'?' on':''}" data-sev="mid"><i style="background:var(--mid)"></i>กลาง — ควรเฝ้าระวัง</button>
+        <button class="sevopt${selForm.sev==='low'?' on':''}" data-sev="low"><i style="background:var(--low)"></i>ต่ำ — แจ้งเพื่อทราบ</button>
+      </div>
+      ${err.sev?'<p class="fmerr">กรุณาเลือกระดับความเสี่ยง</p>':''}
+    </div>
+    <div class="field"><label>ตำแหน่ง</label>
+      <select class="inp"><option>ทางเดินริมคลองบางซื่อ</option><option>หน้าหอสมุดกลาง</option><option>ลานจอดรถอาคาร 62</option></select>
+      <div class="map" style="height:230px;margin-top:4px">
+        <div class="zoom"><span>+</span><span>−</span></div>
+        <i class="pin sel" style="background:var(--high);left:49%;top:47%"></i>
+        <div class="lg">คลิกบนแผนที่เพื่อย้ายหมุด</div>
+      </div>
+      <span class="meta mono">13.81830 N, 100.51480 E · 120 ม. จาก มจพ.</span>
+    </div>
+    <div class="field"><label>วันและเวลาที่พบเหตุ</label><input class="inp" value="17/09/2569 15:40"></div>
+    <div class="field"><label>รายละเอียด</label><textarea class="inp" placeholder="เล่าสั้น ๆ ว่าเกิดอะไรขึ้น เห็นตอนไหน มีใครได้รับผลกระทบไหม"></textarea><span class="meta">0/500</span></div>
+    <div class="field"><label>รูปภาพประกอบ</label>
+      <div class="drop"><span class="soon-tag">ยังไม่เปิดใช้งาน</span><b>แนบรูปได้สูงสุด 3 รูป</b><span>ฟังก์ชันนี้จะเปิดใช้ในเวอร์ชันถัดไป</span></div>
+    </div>
+    <div class="card">
+      <div class="switch"><div class="lbl"><span>ส่งแบบไม่เปิดเผยชื่อ</span><span>เจ้าหน้าที่จะไม่เห็นชื่อและรหัสนักศึกษาของคุณ</span></div><button class="tg" data-tg></button></div>
+      <div class="switch"><div class="lbl"><span>รับการติดต่อกลับทางอีเมล <span class="lockpill">จำเป็น</span></span><span class="mono">s123456790@email.kmutnb.ac.th</span></div><button class="tg on"></button></div>
+    </div>
+    <div class="formfoot"><button class="btn pri" id="submitForm">ส่งรายงาน</button><button class="btn" data-p="map">ยกเลิก</button><span class="meta" style="align-self:center">เหตุฉุกเฉินโทร 191</span></div>
+  </div>`;
+}
+
+function pageReports(){
+  const m=mine();
+  return vhead('ติดตามสถานะ','รายงานของฉัน','รายงานที่คุณส่งและความคืบหน้าจากเจ้าหน้าที่')+
+  `<div class="stack" style="margin-top:16px">${m.map(r=>{
+    const idx=r.stage==='reject'?-1:STAGES.findIndex(s=>s.id===r.stage);
+    return `<div class="card">
+      <div class="rcard"><div>
+        <h3>${esc(catOf(r.cat).name)} — ${esc(r.loc)}</h3>
+        <div class="meta"><span class="mono">${r.id}</span> · ${esc(r.time)} · ยืนยัน ${r.conf} คน</div>
+      </div><span class="pill ${r.sev}">${SEVT[r.sev]}</span></div>
+      ${r.note?`<div class="notewrap"><p class="notelbl">รายละเอียดที่คุณเขียน</p><p class="note">${esc(r.note)}</p></div>`:''}
+      ${r.stage==='reject'
+        ? `<div class="notewrap" style="border-color:#5C3A34"><p class="notelbl" style="color:var(--high)">ไม่อนุมัติ</p><p class="note">${esc(r.rej||'')}</p></div>`
+        : `<div class="stages">${STAGES.map((s,i)=>`<div class="stg ${i<idx?'done':i===idx?'now':''}"><i></i><span>${s.n}</span></div>`).join('')}</div>`}
+    </div>`}).join('')}</div>`;
+}
+
+function pageAlerts(){
+  return vhead('อัปเดตถึงคุณ','การแจ้งเตือน','ความคืบหน้าของรายงานที่คุณส่ง และเหตุใหม่ใกล้เส้นทางของคุณ')+
+  `<div class="tblwrap" style="margin-top:16px">${ALERTS.map(a=>`
+    <div class="alert${a.n?' unread':''}">
+      <span class="ico">${svg(a.k==='done'?'m5 13 4 4L19 7':a.k==='zone'?'M12 21s7-6.3 7-11a7 7 0 1 0-14 0c0 4.7 7 11 7 11Z':ICON.bell)}</span>
+      <div><b>${esc(a.t)}</b>${a.m?`<p>${esc(a.m)}</p>`:''}<div class="t">${esc(a.time)}</div></div>
+    </div>`).join('')}</div>`;
+}
+
+function pageProfile(){
+  const adm=role==='admin', m=mine();
+  const tiles = adm
+    ? [[pending().length,'รอตรวจสอบ'],[R.filter(r=>r.ok&&r.stage!=='reject').length,'อนุมัติแล้ว'],[R.filter(r=>r.stage==='reject').length,'ไม่อนุมัติ'],[R.length,'รายงานในระบบ']]
+    : [[m.filter(r=>r.stage==='done').length,'เรื่องได้รับการแก้ไขแล้ว'],[m.reduce((s,r)=>s+r.conf,0),'คนยืนยันว่าเจอเหมือนกัน'],[m.length,'รายงานทั้งหมด'],[m.filter(r=>r.stage!=='done'&&r.stage!=='reject').length,'ยังอยู่ระหว่างดำเนินการ']];
+  const tl = adm
+    ? AUDIT.map(a=>({c:'var(--accent)',t:`${a.act} · ${a.t}`,s:`${a.a} · ${a.time}`}))
+    : ALERTS.map(a=>({c:a.k==='done'?'var(--low)':a.k==='status'?'var(--accent)':'var(--mid)',t:a.t,s:a.time}))
+        .concat(m.map(r=>({c:`var(--${r.sev})`,t:'คุณแจ้ง '+catOf(r.cat).name,s:`${r.loc} · ${r.time}`}))).slice(0,6);
+  return vhead('บัญชีผู้ใช้','โปรไฟล์และการตั้งค่า')+
+  `<div class="stack" style="margin-top:16px">
+    <div class="card"><div class="prof">
+      <div class="big">${adm?'a':'p'}</div>
+      <div><h2>${adm?'admin':'ping'}</h2><span class="rolebadge${adm?' adm':''}">${adm?'ผู้ดูแลระบบ':'ผู้ใช้ทั่วไป'}</span>
+      <div class="sub mono">${adm?'admin001':'123456790 · s123456790@email.kmutnb.ac.th'}</div></div>
+    </div></div>
+    <div class="card">
+      <h3>${adm?'ภาพรวมงานตรวจสอบ':'ผลจากการแจ้งของคุณ'}</h3>
+      <div class="bigstat">${tiles.map(t=>`<div><b>${t[0]}</b><span>${t[1]}</span></div>`).join('')}</div>
+      <div class="topspot"><i></i><span>สถานะบัญชี <b>ใช้งานได้ปกติ</b></span></div>
+    </div>
+    <div class="card">
+      <h3>กิจกรรมล่าสุด</h3>
+      <div class="tl">${tl.map(x=>`<div><i style="background:${x.c}"></i><span><b>${esc(x.t)}</b><em>${esc(x.s)}</em></span></div>`).join('')}</div>
+      <div class="cardfoot"><button class="linky" data-p="${adm?'audit':'reports'}">${adm?'ดูประวัติการจัดการทั้งหมด':'ดูรายงานทั้งหมด '+m.length+' รายการ'}</button></div>
+    </div>
+    <div class="card">
+      <h3>บัญชี</h3>
+      <div class="kvrow"><span>ชื่อผู้ใช้</span><span class="mono">${adm?'admin':'ping'}</span></div>
+      <div class="kvrow"><span>รหัสประจำตัว</span><span class="mono">${adm?'admin001':'123456790'}</span></div>
+      ${adm?'':`<div class="kvrow"><span>อีเมล</span><span class="mono">s123456790@email.kmutnb.ac.th</span></div>`}
+      <div class="rowbtns"><button class="btn" id="logout">ออกจากระบบ</button></div>
+    </div>
+  </div>`;
+}
+
+function pageQueue(){
+  const q=pending();
+  return vhead('ผู้ดูแลระบบ','คิวรอตรวจสอบ','อนุมัติหรือปฏิเสธรายงานที่ส่งเข้ามา — รายงานจะขึ้นบนแผนที่สาธารณะเมื่ออนุมัติแล้วเท่านั้น')+
+  `<div class="toolbar"><span class="chip on">รอตรวจสอบ ${q.length}</span><span class="chip">รับเรื่องแล้ว 2</span><span class="chip">กำลังดำเนินการ 2</span><span class="chip">เสร็จสมบูรณ์ 2</span><span class="chip">ไม่อนุมัติ 1</span></div>
+   <div class="stack">${q.map(r=>`<div class="card">
+      <div class="rcard"><div>
+        <h3>${esc(catOf(r.cat).name)} — ${esc(r.loc)}</h3>
+        <div class="meta"><span class="mono">${r.id}</span> · ${esc(r.time)} · ${r.dist} จาก มจพ. · ผู้แจ้ง: ${r.mine?'ping':'<i>ไม่เปิดเผยชื่อ</i>'}</div>
+      </div><span class="pill ${r.sev}">${SEVT[r.sev]}</span></div>
+      <div class="notewrap"><p class="notelbl">รายละเอียดจากผู้แจ้ง</p><p class="note">${esc(r.note||'ไม่มีคำอธิบายเพิ่ม')}</p></div>
+      <div class="rowbtns"><button class="btn pri">อนุมัติ</button><button class="btn danger">ไม่อนุมัติ</button></div>
+   </div>`).join('')}</div>`;
+}
+
+function pageAllRep(){
+  return vhead('ผู้ดูแลระบบ','รายงานทั้งหมด','เปลี่ยนสถานะและติดตามทุกเรื่องในระบบ')+
+  `<div class="tblwrap" style="margin-top:16px"><table class="tbl">
+    <thead><tr><th>เลขรายงาน</th><th>เรื่อง</th><th>ระดับ</th><th>สถานะ</th><th>เผยแพร่</th><th></th></tr></thead>
+    <tbody>${R.map(r=>`<tr>
+      <td class="mono">${r.id}</td>
+      <td><b>${esc(catOf(r.cat).name)}</b><div class="meta">${esc(r.loc)} · ${esc(r.time)}</div></td>
+      <td><span class="pill ${r.sev}">${SEVT[r.sev]}</span></td>
+      <td><span class="pill st">${stageName(r.stage)}</span></td>
+      <td>${r.ok?'<span class="pill low">บนแผนที่</span>':'<span class="pill st">ยังไม่ขึ้น</span>'}</td>
+      <td><button class="btn sm">เปลี่ยนสถานะ</button></td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+function pageCmts(){
+  return vhead('ผู้ดูแลระบบ','ความคิดเห็น','ซ่อนความคิดเห็นที่ไม่เหมาะสมออกจากหน้าสาธารณะ')+
+  `<div class="tblwrap" style="margin-top:16px">${COMMENTS.map(c=>`
+    <div class="alert"><span class="ico">${svg(ICON.chat)}</span>
+      <div><b>${esc(c.by)} <span class="mono" style="color:var(--dim);font-weight:400">· ${c.rep}</span></b>
+      <p>${esc(c.tx)}</p><div class="t">${esc(c.time)}</div></div>
+      <button class="btn sm danger" style="align-self:center">ซ่อน</button>
+    </div>`).join('')}</div>`;
+}
+
+function pageAUsers(){
+  return vhead('ผู้ดูแลระบบ','ผู้ใช้ระบบ','ระงับบัญชีที่แจ้งเหตุเท็จซ้ำ ๆ — บัญชีที่ถูกระงับจะเข้าสู่ระบบไม่ได้')+
+  `<div class="tblwrap" style="margin-top:16px"><table class="tbl">
+    <thead><tr><th>ชื่อ</th><th>อีเมล</th><th>บทบาท</th><th>รายงาน</th><th>สถานะ</th><th></th></tr></thead>
+    <tbody>${USERS.map(u=>`<tr>
+      <td><b>${esc(u.n)}</b>${u.n==='admin'&&role==='admin'?' <span class="lockpill">คุณ</span>':''}<div class="meta mono">${u.c}</div></td>
+      <td class="mono">${esc(u.e)}</td>
+      <td>${u.r==='admin'?'<span class="pill st">ผู้ดูแลระบบ</span>':'<span style="color:var(--dim)">ผู้ใช้ทั่วไป</span>'}</td>
+      <td class="mono">${u.rep}</td>
+      <td>${u.a?'<span class="pill low">ใช้งานได้</span>':`<span class="pill high">ถูกระงับ</span><div class="meta">${esc(u.ban||'')}</div>`}</td>
+      <td>${u.n==='admin'?'<span style="color:var(--dim)">—</span>':u.a?'<button class="btn sm danger">ระงับบัญชี</button>':'<button class="btn sm">ปลดระงับ</button>'}</td>
+    </tr>`).join('')}</tbody></table></div>`;
+}
+
+function pageAudit(){
+  return vhead('ผู้ดูแลระบบ','ประวัติการจัดการ','ทุกการอนุมัติ ปฏิเสธ และระงับบัญชี ถูกบันทึกไว้ตรวจสอบย้อนหลังได้')+
+  `<div class="tblwrap" style="margin-top:16px">${AUDIT.map(a=>`
+    <div class="alert"><span class="ico">${svg(ICON.clock)}</span>
+      <div><b>${esc(a.act)} · <span class="mono">${esc(a.t)}</span></b>${a.r?`<p>เหตุผล: ${esc(a.r)}</p>`:''}<div class="t">${esc(a.a)} · ${esc(a.time)}</div></div>
+    </div>`).join('')}</div>`;
+}
+
+const PAGES={map:pageMap,form:pageForm,reports:pageReports,alerts:pageAlerts,profile:pageProfile,queue:pageQueue,allrep:pageAllRep,cmts:pageCmts,ausers:pageAUsers,audit:pageAudit};
+
+function render(){
+  $('#device').classList.toggle('phone',dev==='phone');
+  renderNav();
+  $('#views').innerHTML = `<div class="view on">${(PAGES[page]||pageMap)()}</div>`;
+}
+
+/* ============ events ============ */
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-p],[data-pick],[data-cat],[data-sev],[data-tg],#submitForm,#logout,#doLogin,#toLogin,#fab,[data-role],[data-dev]');
+  if(!t) return;
+  if(t.dataset.role){ role=t.dataset.role; page='map'; sel=publicR()[0].id; $$('#roleSeg button').forEach(b=>b.classList.toggle('on',b===t)); render(); return; }
+  if(t.dataset.dev){ dev=t.dataset.dev; $$('#devSeg button').forEach(b=>b.classList.toggle('on',b===t)); render(); return; }
+  if(t.id==='toLogin'||t.id==='logout'){ $('#loginScreen').style.display='grid'; $('#app').style.display='none'; return; }
+  if(t.id==='doLogin'){ $('#loginScreen').style.display='none'; $('#app').style.display='grid'; page=role==='admin'?'queue':'map'; render(); return; }
+  if(t.id==='fab'){ page='form'; render(); return; }
+  if(t.id==='submitForm'){
+    err.cat=!selForm.cat; err.sev=!selForm.sev;
+    if(err.cat||err.sev){ render(); return; }
+    alert('ส่งรายงานเรียบร้อย — เลขรายงาน RZ-2569-0157\n(เดโม่: ไม่ได้บันทึกจริง)');
+    selForm={cat:'',sev:''}; err={cat:0,sev:0}; page='reports'; render(); return;
+  }
+  if(t.dataset.cat!==undefined){ selForm.cat=t.dataset.cat; err.cat=0; render(); return; }
+  if(t.dataset.sev!==undefined){ selForm.sev=t.dataset.sev; err.sev=0; render(); return; }
+  if(t.hasAttribute('data-tg')){ t.classList.toggle('on'); return; }
+  if(t.dataset.pick!==undefined){ sel=t.dataset.pick; render(); return; }
+  if(t.dataset.p){ page=t.dataset.p; render(); return; }
+});
+
+render();
+</script>
+</body>
+</html>

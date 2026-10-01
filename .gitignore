@@ -1,0 +1,32 @@
+# ---- ความลับ ห้ามขึ้น GitHub ----
+api/config/db.php
+# db.example.php ขึ้นได้ เพราะใส่ค่าปลอมไว้ (ดูคำอธิบายในไฟล์นั้น)
+.env
+*.local.php
+
+# ---- ไฟล์ที่ผู้ใช้อัปโหลด ----
+uploads/*
+!uploads/.gitkeep
+# ★ .htaccess ในโฟลเดอร์นี้ต้องขึ้นไปด้วย ห้ามให้ถูก uploads/* กินทิ้ง
+#   ถ้าไม่มีไฟล์นี้บนโฮสต์ คนอัปโหลด .php ปลอมเป็นรูปแล้วสั่งงานเซิร์ฟเวอร์ได้
+!uploads/.htaccess
+
+# ---- ระบบปฏิบัติการ ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- โปรแกรมแก้โค้ด ----
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# ---- ไฟล์ชั่วคราว / สำรอง ----
+*.log
+*.bak
+*.tmp
+~$*
+
+# ---- ถ้าใช้ Node ในอนาคต ----
+node_modules/
+dist/
